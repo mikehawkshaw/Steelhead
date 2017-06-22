@@ -2,8 +2,9 @@
 #exposure model for steelhead
 
 #read in data
-source(directories.R)
-setwd(data_directory)
+setwd("/Users/mikehawkshaw/github/Steelhead/Model")
+source("directories.R")
+setwd(data_dir)
 
 fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
 fishery_mat<-as.matrix(read.csv("2014Area B_openings.csv"))
@@ -55,6 +56,7 @@ exposure[ind]<-exposure[ind]+fishery_mat[loc,round(time_at_loc)]
 }
 
 
-
-boxplot(exposure)
-
+setwd(plots_dir)
+pdf()
+plot(density(exposure))
+dev.off()
