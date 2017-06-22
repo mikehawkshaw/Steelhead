@@ -1,12 +1,9 @@
 #steelhead.r
 #exposure model for steelhead
 
-#Source file for directories
-source("D:/github/Steelhead") #Brittany's directory
-#source("~/github/Steelhead/Data") #Mike's directory
-
 #read in data
-setwd(data_dir)
+source(directories.R)
+setwd(data_directory)
 
 fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
 fishery_mat<-as.matrix(read.csv("2014Area B_openings.csv"))
@@ -20,7 +17,7 @@ n_km<-521
 n_hours<-3336
 
 #set up a fake steelhead population
-#IBM
+#IBM like model
 
 n_fish<-1000
 fish<-seq(1,n_fish,by=1)

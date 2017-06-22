@@ -16,7 +16,6 @@
 knitr-cache
 .RData
 .RHistory
-hake-example.tex
 .DS_Store
-
+directories.R
 myNotes.*
