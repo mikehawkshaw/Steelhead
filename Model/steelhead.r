@@ -2,8 +2,8 @@
 #exposure model for steelhead
 
 #read in data
-setwd("/Users/mikehawkshaw/github/Steelhead/Model")
 source("directories.R")
+library("xtable")
 setwd(data_dir)
 
 fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
