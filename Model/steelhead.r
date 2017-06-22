@@ -16,7 +16,7 @@ n_km<-521
 n_hours<-3336
 
 #set up a fake steelhead population
-#IBM
+#IBM like model
 
 n_fish<-1000
 fish<-seq(1,n_fish,by=1)
