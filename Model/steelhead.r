@@ -1,24 +1,11 @@
-steelhead.r
-
+#steelhead.r
 #exposure model for steelhead
 
 #read in data
-setwd("/Users/mikehawkshaw/Dropbox/SteelheadModel/OpeningMatrices")
-
-#fishery_mat<-read.csv("2010Area E_openings.csv")
-#fishery_mat<-read.csv("2011Area E_openings.csv")
-#fishery_mat<-read.csv("2012Area E_openings.csv")
-#fishery_mat<-read.csv("2013Area E_openings.csv")
-fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
-#fishery_mat<-read.csv("2015Area E_openings.csv")
-#fishery_mat<-read.csv("2016Area E_openings.csv")
-
-
+setwd("~/github/Steelhead/Data")
 
 fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
-
 fishery_mat<-as.matrix(read.csv("2014Area B_openings.csv"))
-
 
 colnames(fishery_mat)<-NULL
 fishery_mat<-fishery_mat[,2:3337]
@@ -68,5 +55,5 @@ exposure[ind]<-exposure[ind]+fishery_mat[loc,round(time_at_loc)]
 
 
 
-boxplot(list(exposure_2010, exposure_2011, exposure_2012, exposure_2013, exposure_2014, exposure_2015, exposure_2016), names=c("2010","2011","2012","2013","2014","2015","2016"))
+boxplot(exposure)
 
