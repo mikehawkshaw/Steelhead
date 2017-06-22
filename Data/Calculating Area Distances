@@ -1,0 +1,27 @@
+Calculating Area Distances
+ 
+	•	Ignoring southern route for now (Areas 17+)
+	•	Used Google Earth to calculate distance fish travelled through the water. Straight line path. When an island split a route, just did a straight line through (did not split into 2 routes). There are several areas that could use improvement in the distance calculations due to:
+	•	Islands splitting the route
+	•	Unsure what exactly is included in a sub-area
+	•	Unsure if steelhead would travel through an area
+	•	Some routes/inlets perpendicular to mainstem so distance calculations not clear
+	•	All measurements have been saved in Google Earth with their area names. 
+	•	The starting point (km = 0) is the NW corner of Area 11-1 at Lat  51° 9'48.90"N Long 128° 4'8.10"W
+	•	Distances were easily calculated using the measuring tool in Google Earth. In many cases, one Area starts at the end km of the adjacent area, but some groups overlap because they are amalgamations of several sub-areas.
+	•	Descriptions of Troll Zones were obtained from FOS system. Many of these were excluded from the Matrix Creator because they were not part of the current areas of interest.
+ 
+Converting dates to hours
+	•	We wanted to gather opening information for 2004-2016 from July 15 - Nov 30 each year. 
+	•	An Excel spreadsheet was set up to create a lookup table based on the year of interest. This is needed for putting the opening information into a matrix. It converts the date and time into a cumulative hour, starting from July 15 00:00 as Hour 0, July 15 01:00 as Hour 2, etc. July 16 00:00 is Hour 24.
+ 
+Data Source
+	•	Commercial fishery data was obtained from the Fishery Operating System.
+	•	Opening, Catch, and Effort information must be pulled year by year. To get all the catch (incl. steelhead), we’d need to use:
+	•	Export Data > In-season Estimates > Salmon Total Catch Estimates  this gets us catch for all salmon species by opening, includes effort by day (split out by sub-area groupings (e.g. “Upper JST (12-3W, 12-4, 12-21)”)
+	•	Made a few minor modifications to the data where there were blanks, using filled-in data from other years. Changes are commented in the MatrixCreator file.
+ 
+Data manipulation
+	•	Data was transformed using Excel VBA into a matrix of 0 and 1 where 0 = closed and 1 = open. The row data indicates hour, and column data indicates km.
+	•	One matrix was created for each fishery (Area B, Area D, Area G, Area H, Area E) for each year, for a total of 65 .csv data files.
+	•	Catch and effort data has not been manipulated yet.
