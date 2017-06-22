@@ -1,0 +1,28 @@
+---
+title: "Steelhead Exposure Analysis"
+author: "Mike Hawkshaw, Brittany Jenewein"
+date: "6/22/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Steelhead migrate through a bunch of fisheries.  What are the differences in exposure to fisheries between recent years of fisheries.
+
+
+## Method
+
+We build an exposure model for Steelhead
+
+##Results
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
