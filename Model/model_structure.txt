@@ -1,3 +1,4 @@
 model_structure
 
-The model is a MCMC exposure model.  It takes a hypothetical population and runs it through the actual fisheries.
+The model is a MCMC exposure model.  
+It takes a hypothetical population and runs it through the actual fisheries to estimate likely  exposure.
