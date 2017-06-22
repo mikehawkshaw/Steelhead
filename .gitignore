@@ -20,3 +20,4 @@ knitr-cache
 directories.R
 myNotes.*
 .Rproj.user
+.Rapp.history
