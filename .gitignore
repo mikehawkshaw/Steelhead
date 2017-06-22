@@ -1,0 +1,22 @@
+*.aux
+*.bbl
+*.blg
+*~*
+*.dvi
+*.log
+*.lot
+*.pdf
+*.ps
+*.toc
+# *.txt
+*.out
+*.snm
+*.nav
+*.synctex.gz*
+knitr-cache
+.RData
+.RHistory
+hake-example.tex
+.DS_Store
+
+myNotes.*
