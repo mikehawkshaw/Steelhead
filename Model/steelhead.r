@@ -2,7 +2,8 @@
 #exposure model for steelhead
 
 #read in data
-setwd("~/github/Steelhead/Data")
+source(directories.R)
+setwd(data_directory)
 
 fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
 fishery_mat<-as.matrix(read.csv("2014Area B_openings.csv"))
