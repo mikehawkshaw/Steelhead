@@ -2,7 +2,6 @@
 #exposure model for steelhead
 
 #read in data
-setwd("/Users/mikehawkshaw/github/Steelhead/Model")
 source("directories.R")
 setwd(data_dir)
 
