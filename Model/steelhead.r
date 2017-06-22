@@ -57,6 +57,10 @@ exposure[ind]<-exposure[ind]+fishery_mat[loc,round(time_at_loc)]
 
 
 setwd(plots_dir)
+
+save(exposure, file="2014AreaE.Rdata")
+
 pdf()
+
 plot(density(exposure))
 dev.off()
