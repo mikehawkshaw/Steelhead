@@ -1,8 +1,12 @@
 #steelhead.r
 #exposure model for steelhead
 
+#Source file for directories
+source("D:/github/Steelhead") #Brittany's directory
+#source("~/github/Steelhead/Data") #Mike's directory
+
 #read in data
-setwd("~/github/Steelhead/Data")
+setwd(data_dir)
 
 fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
 fishery_mat<-as.matrix(read.csv("2014Area B_openings.csv"))
