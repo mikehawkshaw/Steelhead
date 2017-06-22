@@ -3,6 +3,7 @@
 
 #read in data
 source("directories.R")
+library("xtable")
 setwd(data_dir)
 
 fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
