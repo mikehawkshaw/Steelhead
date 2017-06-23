@@ -12,7 +12,7 @@ s<-rep(0,n_col)
 
 deviates<-albion_annual-albion_annual
 
-years<-seq(1995,2013)
+years<-seq(1995,1995+n_col-2)
 
 #ignore first colum because it has the day of year index and we don't want to fit a normal curve to that...
 
