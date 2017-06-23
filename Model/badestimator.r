@@ -57,7 +57,7 @@ hist(s[2:n_col],prob=TRUE, breaks=20, main="",xlab="Distribution of standard dev
 lines(5:50,s_aprox,col="red")
 mtext(" (b) ",cex=0.75,line=-1.5,adj=1)
 
-plot(m[2:n_col],s[2:n_col],xlab="mean",ylab="standard deviations")
+plot(m[2:n_col],s[2:n_col],xlab="mean",ylab="standard deviations", bty="n")
 mtext(" (c) ",cex=0.75,line=-1.5,adj=1)
 
 par(mfcol=c(1,1))
