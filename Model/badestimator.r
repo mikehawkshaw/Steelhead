@@ -32,7 +32,7 @@ deviates[,i]<-p-pth
 
 #plot fitted normal distribution to observations
 #it's important to check these - because of the nature of the truncated data set there appears to be a bias towards a later run timing prediction.
-#this is probably an artifact of fixing the IFC runt timing with the decay curve - i don't knwo the BEST way to correct for this - though i have several ideas
+#this is probably an artifact of fixing the IFC run timing with the decay curve - i don't know the BEST way to correct for this - though i have several ideas
 
 plot(albion_annual[,1],p,type="b", col="blue",main=years[i-1],xlab="Julian Date", ylab="Corrected Albion Catch")
 lines(albion_annual[,1],pth, col="dark red",lwd=2)
@@ -40,7 +40,7 @@ lines(albion_annual[,1],pth, col="dark red",lwd=2)
 }
 
 par(mfcol=c(1,3))
-
+#If we're going to use these plots in publications/presentations we'll need to fix the x-axis title widths and/or add line breaks
 m_mean = mean(m[2:n_col])
 m_sd = sd(m[2:n_col])
 m_aprox<-dnorm(min(albion_annual$jday):max(albion_annual$jday),m_mean,1.5*m_sd)
