@@ -19,4 +19,5 @@ knitr-cache
 .DS_Store
 directories.R
 myNotes.*
+.Rproj.user
 .Rapp.history
