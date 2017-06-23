@@ -35,7 +35,7 @@ seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j")
 #population characteristics (these are the hypothesis about the population that will be tested)
 rt_mean<-subset(sh_runtiming$mean,sh_runtiming$year=="2013")-seasonstart_doy
 rt_sd<-subset(sh_runtiming$sd,sh_runtiming$year=="2013")
-starting_date<-(pmax(30,pmin(110,rnorm(fish,rt_mean,rt_sd)))) #starting date in hours
+starting_date<-(pmax(30,pmin(140,rnorm(fish,rt_mean,rt_sd)))) #starting date in hours
 starting_hour<-starting_date*24
 
 speed_mean<-20
