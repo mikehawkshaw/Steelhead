@@ -29,8 +29,8 @@ speeds<-rep(0,n_fish)
 starting_date<-rep(0,n_fish)
 
 #population characteristics (these are the hypothesis about the population that will be tested)
-rt_mean<-100
-rt_sd<-10
+rt_mean<-subset(sh_runtiming$mean,sh_runtiming$year=="2013")
+rt_sd<-subset(sh_runtiming$sd,sh_runtiming$year=="2013")
 speed_mean<-20
 speed_sd<-3
 
