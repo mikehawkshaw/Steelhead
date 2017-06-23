@@ -28,15 +28,20 @@ exposure<-rep(NA,n_fish)
 speeds<-rep(0,n_fish)
 starting_date<-rep(0,n_fish)
 
+#Get day of year for July 15 of year of interest (season start)
+yr="2013" #put into variable so it can be made dynamic later when looping
+seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j"))
+
 #population characteristics (these are the hypothesis about the population that will be tested)
-rt_mean<-subset(sh_runtiming$mean,sh_runtiming$year=="2013")
+rt_mean<-subset(sh_runtiming$mean,sh_runtiming$year=="2013")-seasonstart_doy
 rt_sd<-subset(sh_runtiming$sd,sh_runtiming$year=="2013")
+starting_date<-(pmax(30,pmin(110,rnorm(fish,rt_mean,rt_sd)))) #starting date in hours
+starting_hour<-starting_date*24
+
 speed_mean<-20
 speed_sd<-3
-
 speeds<-(pmax(9,pmin(55,rnorm(fish,speed_mean,speed_sd))))/24	#speed in km/h
-starting_date<-(pmax(15,pmin(85,rnorm(fish,rt_mean,rt_sd)))) #starting date in hours
-starting_hour<-starting_date*24
+
 #move fish though fisheries 
 
 for(ind in 1:n_fish)
