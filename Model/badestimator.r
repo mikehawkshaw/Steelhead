@@ -72,3 +72,8 @@ plot(years,m[2:n_col], xlab="Year", ylab="50% date", main="No Time Trend in Date
 mean=m_mean
 #SD*2.5 provides a better fit of the normal curve to the average daily catch (by eye! so don't use it but think about why?)
 sd=s_mean
+
+#Write each year's 50% date and SD to file
+timing_df <- data.frame(years,m[2:n_col],s[2:n_col])
+names(timing_df) <- c("year","mean","sd")
+write.csv(file=paste(data_dir,"/steelhead_pops.csv", sep=""), x=timing_df,row.names=F)
