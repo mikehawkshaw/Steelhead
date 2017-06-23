@@ -6,8 +6,8 @@ source("directories.R")
 library("xtable")
 setwd(data_dir)
 
-fishery_mat<-as.matrix(read.csv("2014Area E_openings.csv"))
-fishery_mat<-as.matrix(read.csv("2014Area B_openings.csv"))
+fishery_mat<-as.matrix(read.csv("2013Area E_openings.csv"))
+fishery_mat<-as.matrix(read.csv("2013Area B_openings.csv"))
 
 colnames(fishery_mat)<-NULL
 fishery_mat<-fishery_mat[,2:3337]
