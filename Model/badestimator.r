@@ -34,7 +34,7 @@ deviates[,i]<-p-pth
 #it's important to check these - because of the nature of the truncated data set there appears to be a bias towards a later run timing prediction.
 #this is probably an artifact of fixing the IFC runt timing with the decay curve - i don't knwo the BEST way to correct for this - though i have several ideas
 
-plot(albion_annual[,1],p,type="b", col="blue",main=years[i],xlab="Julian Date", ylab="Corrected Albion Catch")
+plot(albion_annual[,1],p,type="b", col="blue",main=years[i-1],xlab="Julian Date", ylab="Corrected Albion Catch")
 lines(albion_annual[,1],pth, col="dark red",lwd=2)
 
 }
