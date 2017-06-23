@@ -12,7 +12,7 @@ fishery_mat<-as.matrix(read.csv("2014Area B_openings.csv"))
 colnames(fishery_mat)<-NULL
 fishery_mat<-fishery_mat[,2:3337]
 
-steelhead_data<-as.data.frame(read.csv("steelhead_pops.csv", header=T))
+sh_runtiming<-as.data.frame(read.csv("steelhead_runtiming.csv", header=T))
 
 n_km<-521
 n_hours<-3336
