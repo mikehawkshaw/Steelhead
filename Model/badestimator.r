@@ -1,16 +1,18 @@
+#Model to estimate 50% run timing for steelhead, both over time series and year-specific.
+
 source("directories.R")
 library("xtable")
 setwd(data_dir)
 
+#Read in and set up data
 albion_annual<-read.table("steelhead_albion.csv",header=T, sep=",")
-
 
 n_col<-dim(albion_annual)[2]
 
 m<-rep(0,n_col)
 s<-rep(0,n_col)
 
-deviates<-albion_annual-albion_annual
+deviates<-albion_annual-albion_annual #BJ: What is the purpose of this?
 
 years<-seq(1995,1995+n_col-2)
 
