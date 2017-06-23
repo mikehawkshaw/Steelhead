@@ -76,4 +76,4 @@ sd=s_mean
 #Write each year's 50% date and SD to file
 timing_df <- data.frame(years,m[2:n_col],s[2:n_col])
 names(timing_df) <- c("year","mean","sd")
-write.csv(file=paste(data_dir,"/steelhead_pops.csv", sep=""), x=timing_df,row.names=F)
+write.csv(file=paste(data_dir,"/steelhead_runtiming.csv", sep=""), x=timing_df,row.names=F)
