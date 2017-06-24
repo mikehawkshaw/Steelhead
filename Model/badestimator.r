@@ -14,7 +14,7 @@ deviates<-albion_annual-albion_annual
 
 years<-seq(1995,2013)
 
-#ignore first colum because it has the day of year index and we don't want to fit a normal curve to that...
+#ignore first column because it has the day of year index and we don't want to fit a normal curve to that...
 
 for(i in 2:n_years)
 {
@@ -32,7 +32,7 @@ deviates[,i]<-p-pth
 
 #plot fitted normal distribution to observations
 #its important to check these - because of the nature of the truncated data set there appears to be a bias towards a later run timing prediction.
-#this is probably an artifact of fixing the IFC runttimgin with the decay curve - i don't knwo the BEST way to correct for this - though i have several ideas
+#this is probably an artifact of fixing the IFR steelhead run timing with the decay curve - i don't knwo the BEST way to correct for this - though i have several ideas
 
 plot(albion_annual[,1],p,type="b", col="blue",main=years[i],xlab="Julian Date", ylab="Corrected Albion Catch")
 lines(albion_annual[,1],pth, col="dark red",lwd=2)
