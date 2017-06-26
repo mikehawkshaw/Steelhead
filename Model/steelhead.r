@@ -72,8 +72,8 @@ for(ind in 1:n_fish)
   exposure[ind]<-0
   for(loc in 1:512){ #512 is km where Albion located
     
-    start_time<-passage_hour[ind]
-    time_at_loc<-start_time-(512-loc)/speeds[ind]
+    passage_time<-passage_hour[ind]
+    time_at_loc<-passage_time-(512-loc)/speeds[ind]
     
     #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
     
@@ -96,8 +96,8 @@ for(ind in 1:n_fish)
 exposure[ind]<-0
 for(loc in 513:n_km){ #From Albion upstream, not including Albion start
 
-start_time<-passage_hour[ind]
-time_at_loc<-start_time+(loc-512)/speeds[ind]
+passage_time<-passage_hour[ind]
+time_at_loc<-passage_time+(loc-512)/speeds[ind]
 
 #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
 
