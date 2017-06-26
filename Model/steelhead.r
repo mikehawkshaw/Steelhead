@@ -6,8 +6,15 @@ source("directories.R")
 library("xtable")
 setwd(data_dir)
 
-fishery_mat<-as.matrix(read.csv("2013Area E_openings.csv"))
+###########################################
+#Read in fishery openings data and format
+###########################################
+
 fishery_mat<-as.matrix(read.csv("2013Area B_openings.csv"))
+fishery_mat<-as.matrix(read.csv("2013Area D_openings.csv"))
+fishery_mat<-as.matrix(read.csv("2013Area E_openings.csv"))
+fishery_mat<-as.matrix(read.csv("2013Area G_openings.csv"))
+fishery_mat<-as.matrix(read.csv("2013Area H_openings.csv"))
 
 colnames(fishery_mat)<-NULL
 fishery_mat<-fishery_mat[,2:3337]
@@ -17,8 +24,10 @@ sh_runtiming<-as.data.frame(read.csv("steelhead_runtiming.csv", header=T))
 n_km<-521
 n_hours<-3336
 
+###################################
 #set up a fake steelhead population
 #IBM like model
+###################################
 
 n_fish<-1000
 fish<-seq(1,n_fish,by=1)
