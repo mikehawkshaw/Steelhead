@@ -106,6 +106,9 @@ exposure[ind]<-exposure[ind]+fishery_mat[loc,round(time_at_loc)]
 }
 }
 
+##############################
+#Print plots to pdf file
+##############################
 
 setwd(plots_dir)
 
