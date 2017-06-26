@@ -26,7 +26,7 @@ fish<-seq(1,n_fish,by=1)
 #each fish has characteristics and they are in these vectors
 exposure<-rep(NA,n_fish)
 speeds<-rep(0,n_fish)
-starting_date<-rep(0,n_fish)
+passage_date<-rep(0,n_fish)
 
 #Get day of year for July 15 of year of interest (season start)
 yr="2013" #put into variable so it can be made dynamic later when looping
@@ -35,8 +35,9 @@ seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j")
 #population characteristics (these are the hypothesis about the population that will be tested)
 rt_mean<-subset(sh_runtiming$mean,sh_runtiming$year=="2013")-seasonstart_doy
 rt_sd<-subset(sh_runtiming$sd,sh_runtiming$year=="2013")
-starting_date<-(pmax(30,pmin(140,rnorm(fish,rt_mean,rt_sd)))) #starting date in hours
-starting_hour<-starting_date*24
+#passage date = the date that the fish passes Albion
+passage_date<-(pmax(30,pmin(140,rnorm(fish,rt_mean,rt_sd))))
+passage_hour<-passage_date*24
 
 speed_mean<-20
 speed_sd<-3
@@ -50,7 +51,7 @@ for(ind in 1:n_fish)
 exposure[ind]<-0
 for(loc in 1:n_km){
 
-start_time<-starting_hour[ind]
+start_time<-passage_hour[ind]
 time_at_loc<-start_time+loc*speeds[ind]
 
 #check exposure against fishery matrix
