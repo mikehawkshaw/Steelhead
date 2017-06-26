@@ -32,29 +32,65 @@ passage_date<-rep(0,n_fish)
 yr="2013" #put into variable so it can be made dynamic later when looping
 seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j"))
 
-#population characteristics (these are the hypothesis about the population that will be tested)
-rt_mean<-subset(sh_runtiming$mean,sh_runtiming$year=="2013")-seasonstart_doy
+################################################################################################
+#Population characteristics (these are the hypothesis about the population that will be tested)
+################################################################################################
+
+#Run-timing of the population. Based on mean and SD calculated in file "badestimator.r"
+rt_mean<-subset(sh_runtiming$mean,sh_runtiming$year=="2013")-seasonstart_doy #subtract season start day to put in correct position in matrix
 rt_sd<-subset(sh_runtiming$sd,sh_runtiming$year=="2013")
-#passage date = the date that the fish passes Albion
+
+#passage_date = the date that the fish passes Albion
 passage_date<-(pmax(30,pmin(140,rnorm(fish,rt_mean,rt_sd))))
-passage_hour<-passage_date*24
+passage_hour<-passage_date*24 #convert to hours. Hour 0 = midnight July 15
 
-speed_mean<-20
+#Speed that the fish travel. Assumptions based on speed of other salmonids.
+speed_mean<-20 #km/day
 speed_sd<-3
-speeds<-(pmax(9,pmin(55,rnorm(fish,speed_mean,speed_sd))))/24	#speed in km/h
+speeds<-(pmax(9,pmin(55,rnorm(fish,speed_mean,speed_sd))))/24 #km/hr
 
-#move fish though fisheries 
+#################################################
+#Move fish BACKWARD from Albion through fisheries
+#################################################
+
+#Loop through each fishery
+
+#Loop through each fish
+
+for(ind in 1:n_fish)
+{
+  
+  exposure[ind]<-0
+  for(loc in 1:512){ #512 is km where Albion located
+    
+    start_time<-passage_hour[ind]
+    time_at_loc<-start_time-(512-loc)/speeds[ind]
+    
+    #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
+    
+    exposure[ind]<-exposure[ind]+fishery_mat[loc,round(time_at_loc)]
+    
+  }
+}
+
+#################################################
+#Move fish FORWARD from Albion through fisheries
+#################################################
+
+#Loop through each fishery
+
+#Loop through each fish
 
 for(ind in 1:n_fish)
 {
 
 exposure[ind]<-0
-for(loc in 1:n_km){
+for(loc in 513:n_km){ #From Albion upstream, not including Albion start
 
 start_time<-passage_hour[ind]
-time_at_loc<-start_time+loc*speeds[ind]
+time_at_loc<-start_time+(512+loc)/speeds[ind]
 
-#check exposure against fishery matrix
+#check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
 
 exposure[ind]<-exposure[ind]+fishery_mat[loc,round(time_at_loc)]
 
