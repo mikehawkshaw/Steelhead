@@ -128,7 +128,7 @@ setwd(plots_dir)
 
 #save(exposure, file="2014AreaE.Rdata")
 
-pdf()
+pdf(file = "Exposure_Plots.pdf")
 
 #plot(density(exposure))
 
