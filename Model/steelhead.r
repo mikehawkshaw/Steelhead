@@ -10,11 +10,11 @@ setwd(data_dir)
 #Read in fishery openings data and format
 ###########################################
 
-fishery_array<- array(as.numeric(NA), dim = c(521,3336,5,10)) #row, column, fishery, year
+fishery_array<- array(as.numeric(NA), dim = c(521,3336,5,13)) #row, column, fishery, year
 
 yr=2004
 
-for(i in 1:10){ #Only goes to 2013 right now!! Need run timing for later years.
+for(i in 1:13){ #Updated to include up to 2016 since now using same run timing every year
   
 AreaB<-as.matrix(read.csv(paste(yr,"Area B_openings.csv",sep="")))
 AreaD<-as.matrix(read.csv(paste(yr,"Area D_openings.csv",sep="")))
@@ -53,7 +53,7 @@ passage_date<-rep(0,n_fish)
 yr=2004 #re-initialize year variable
 
 #Loop through each year
-for(y in 1:10){
+for(y in 1:13){
 #Get day of year for July 15 of year of interest (season start)
 seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j"))
 
@@ -149,7 +149,7 @@ pdf(file = "Exposure by Fishery.pdf")
 par(mfcol=c(5,5))
 par(mar=c(2,2,1,1))
 yr=2004
-for(y in 1:10){
+for(y in 1:13){
 hist(exposure[,1,y], breaks=50, main=paste("Area B ",yr),xlim=range(0,200))
 hist(exposure[,2,y], breaks=50, main=paste("Area D ",yr), xlim=range(0,200))
 hist(exposure[,3,y], breaks=50, main=paste("Area E ",yr), xlim=range(0,200))
@@ -164,7 +164,7 @@ pdf(file = "Exposure vs Passage Time.pdf")
 par(mfcol=c(5,5))
 par(mar=c(2,2,1,1))
 yr=2004
-for(y in 1:10){
+for(y in 1:13){
   #Exposure to fisheries compared to run timing
   #xlab="Passage hour at Albion"
 plot(passage_hour,exposure[,1,y], main=paste("Area B ",yr))
