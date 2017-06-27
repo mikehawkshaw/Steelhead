@@ -89,7 +89,6 @@ for(f in 1:5) {
        exposure[ind,f]<-exposure[ind,f]+fishery_array[loc,round(time_at_loc),f]
      }
    }
-  print(exposure[,f]) #For checking it works ok
 }
 
 #################################################
@@ -119,7 +118,6 @@ for(f in 1:5){
       }
      }
    }
-  print(exposure[,f]) #For checking it works ok
 }
 
 ##############################
