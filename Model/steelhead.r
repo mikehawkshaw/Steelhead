@@ -89,7 +89,7 @@ for(f in 1:5) {
        exposure[ind,f]<-exposure[ind,f]+fishery_array[loc,round(time_at_loc),f]
      }
    }
-  print(exposure[,f])
+  print(exposure[,f]) #For checking it works ok
 }
 
 #################################################
@@ -119,6 +119,7 @@ for(f in 1:5){
       }
      }
    }
+  print(exposure[,f]) #For checking it works ok
 }
 
 ##############################
@@ -131,5 +132,23 @@ setwd(plots_dir)
 
 pdf()
 
-plot(density(exposure))
+#plot(density(exposure))
+
+hist(exposure[,1], main="Exposure to Area B Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
+hist(exposure[,2], main="Exposure to Area D Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
+hist(exposure[,3], main="Exposure to Area E Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
+hist(exposure[,4], main="Exposure to Area G Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
+hist(exposure[,5], main="Exposure to Area H Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
+
+plot(passage_hour,exposure[,1], main="Exposure to Area B Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
+     ylab="Total exposure (hrs)")
+plot(passage_hour,exposure[,2], main="Exposure to Area D Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
+     ylab="Total exposure (hrs)")
+plot(passage_hour,exposure[,3], main="Exposure to Area E Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
+     ylab="Total exposure (hrs)")
+plot(passage_hour,exposure[,4], main="Exposure to Area G Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
+     ylab="Total exposure (hrs)")
+plot(passage_hour,exposure[,5], main="Exposure to Area H Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
+     ylab="Total exposure (hrs)")
+
 dev.off()
