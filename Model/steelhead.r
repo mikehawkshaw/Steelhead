@@ -10,14 +10,21 @@ setwd(data_dir)
 #Read in fishery openings data and format
 ###########################################
 
-fishery_mat<-as.matrix(read.csv("2013Area B_openings.csv"))
-fishery_mat<-as.matrix(read.csv("2013Area D_openings.csv"))
-fishery_mat<-as.matrix(read.csv("2013Area E_openings.csv"))
-fishery_mat<-as.matrix(read.csv("2013Area G_openings.csv"))
-fishery_mat<-as.matrix(read.csv("2013Area H_openings.csv"))
+AreaB<-as.matrix(read.csv("2013Area B_openings.csv"))
+AreaD<-as.matrix(read.csv("2013Area D_openings.csv"))
+AreaE<-as.matrix(read.csv("2013Area E_openings.csv"))
+AreaG<-as.matrix(read.csv("2013Area G_openings.csv"))
+AreaH<-as.matrix(read.csv("2013Area H_openings.csv"))
 
-colnames(fishery_mat)<-NULL
-fishery_mat<-fishery_mat[,2:3337]
+fishery_array<- array(as.numeric(NA), dim = c(521,3336,5))
+
+fishery_array[,,1]<-AreaB[,2:3337]
+fishery_array[,,2]<-AreaD[,2:3337]
+fishery_array[,,3]<-AreaE[,2:3337]
+fishery_array[,,4]<-AreaG[,2:3337]
+fishery_array[,,5]<-AreaH[,2:3337]
+
+colnames(fishery_array)<-NULL
 
 sh_runtiming<-as.data.frame(read.csv("steelhead_runtiming.csv", header=T))
 
@@ -33,7 +40,7 @@ n_fish<-1000
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
-exposure<-rep(NA,n_fish)
+exposure<-array(as.numeric(NA),dim=c(n_fish,5))
 speeds<-rep(0,n_fish)
 passage_date<-rep(0,n_fish)
 
@@ -64,23 +71,25 @@ speeds<-(pmax(9,pmin(55,rnorm(fish,speed_mean,speed_sd))))/24 #km/hr
 
 #Loop through each fishery
 
-
-#Loop through each fish
-
-for(ind in 1:n_fish)
-{
+for(f in 1:5) {
   
-  exposure[ind]<-0
-  for(loc in 1:494){ #494 is km where Albion located
+   #Loop through each fish
+
+   for(ind in 1:n_fish)
+   {
+  
+     exposure[ind,f]<-0
+     for(loc in 1:494){ #494 is km where Albion located
     
-    passage_time<-passage_hour[ind]
-    time_at_loc<-passage_time-(494-loc)/speeds[ind]
+       passage_time<-passage_hour[ind]
+       time_at_loc<-passage_time-(494-loc)/speeds[ind]
     
-    #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
+       #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
     
-    exposure[ind]<-exposure[ind]+fishery_mat[loc,round(time_at_loc)]
-    
-  }
+       exposure[ind,f]<-exposure[ind,f]+fishery_array[loc,round(time_at_loc),f]
+     }
+   }
+  print(exposure[,f])
 }
 
 #################################################
@@ -89,22 +98,27 @@ for(ind in 1:n_fish)
 
 #Loop through each fishery
 
-#Loop through each fish
+for(f in 1:5){
 
-for(ind in 1:n_fish)
-{
+   #Loop through each fish
 
-exposure[ind]<-0
-for(loc in 495:n_km){ #From Albion upstream, not including Albion start
+   for(ind in 1:n_fish)
+   {
 
-passage_time<-passage_hour[ind]
-time_at_loc<-passage_time+(loc-494)/speeds[ind]
+     for(loc in 495:515){ #From Albion to Mission, not including Albion start
 
-#check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
+     passage_time<-passage_hour[ind]
+     time_at_loc<-passage_time+(loc-494)/speeds[ind]
 
-exposure[ind]<-exposure[ind]+fishery_mat[loc,round(time_at_loc)]
-
-}
+     #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
+     #If the fish is in the area after the time we care about, then obviously it's not exposed to any fisheries.
+     if (time_at_loc>3336){
+       exposure[ind,f]<-exposure[ind,f]
+      } else {
+       exposure[ind,f]<-exposure[ind,f]+fishery_array[loc,round(time_at_loc),f]
+      }
+     }
+   }
 }
 
 ##############################
