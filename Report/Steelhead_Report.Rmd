@@ -2,7 +2,7 @@
 title: "Steelhead Exposure Analysis"
 author: "Mike Hawkshaw, Brittany Jenewein"
 date: "6/22/2017"
-output: pdf_document
+output: word_document
 ---
 
 ## Introduction
