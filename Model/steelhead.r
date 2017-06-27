@@ -10,19 +10,26 @@ setwd(data_dir)
 #Read in fishery openings data and format
 ###########################################
 
-AreaB<-as.matrix(read.csv("2013Area B_openings.csv"))
-AreaD<-as.matrix(read.csv("2013Area D_openings.csv"))
-AreaE<-as.matrix(read.csv("2013Area E_openings.csv"))
-AreaG<-as.matrix(read.csv("2013Area G_openings.csv"))
-AreaH<-as.matrix(read.csv("2013Area H_openings.csv"))
+fishery_array<- array(as.numeric(NA), dim = c(521,3336,5,10)) #row, column, fishery, year
 
-fishery_array<- array(as.numeric(NA), dim = c(521,3336,5))
+yr=2004
 
-fishery_array[,,1]<-AreaB[,2:3337]
-fishery_array[,,2]<-AreaD[,2:3337]
-fishery_array[,,3]<-AreaE[,2:3337]
-fishery_array[,,4]<-AreaG[,2:3337]
-fishery_array[,,5]<-AreaH[,2:3337]
+for(i in 1:10){ #Only goes to 2013 right now!! Need run timing for later years.
+  
+AreaB<-as.matrix(read.csv(paste(yr,"Area B_openings.csv",sep="")))
+AreaD<-as.matrix(read.csv(paste(yr,"Area D_openings.csv",sep="")))
+AreaE<-as.matrix(read.csv(paste(yr,"Area E_openings.csv",sep="")))
+AreaG<-as.matrix(read.csv(paste(yr,"Area G_openings.csv",sep="")))
+AreaH<-as.matrix(read.csv(paste(yr,"Area H_openings.csv",sep="")))
+  
+fishery_array[,,1,i]<-AreaB[,2:3337]
+fishery_array[,,2,i]<-AreaD[,2:3337]
+fishery_array[,,3,i]<-AreaE[,2:3337]
+fishery_array[,,4,i]<-AreaG[,2:3337]
+fishery_array[,,5,i]<-AreaH[,2:3337]
+
+yr=yr+1
+}
 
 colnames(fishery_array)<-NULL
 
@@ -35,17 +42,19 @@ n_hours<-3336
 #set up a fake steelhead population
 #IBM like model
 ###################################
-
 n_fish<-1000
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
-exposure<-array(as.numeric(NA),dim=c(n_fish,5))
+exposure<-array(as.numeric(NA),dim=c(n_fish,5,13))
 speeds<-rep(0,n_fish)
 passage_date<-rep(0,n_fish)
 
+yr=2004 #re-initialize year variable
+
+#Loop through each year
+for(y in 1:10){
 #Get day of year for July 15 of year of interest (season start)
-yr="2013" #put into variable so it can be made dynamic later when looping
 seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j"))
 
 ################################################################################################
@@ -75,18 +84,22 @@ for(f in 1:5) {
   
    #Loop through each fish
 
-   for(ind in 1:n_fish)
-   {
+   for(ind in 1:n_fish){
   
-     exposure[ind,f]<-0
+     exposure[ind,f,y]<-0
      for(loc in 1:494){ #494 is km where Albion located
     
        passage_time<-passage_hour[ind]
        time_at_loc<-passage_time-(494-loc)/speeds[ind]
-    
+      
        #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
-    
-       exposure[ind,f]<-exposure[ind,f]+fishery_array[loc,round(time_at_loc),f]
+       #If the fish is in the area before the time we care about, then obviously it's not exposed to any fisheries. May want to
+       #edit later so that we can run it longer. Will need to make the opening matrices larger.
+       if (time_at_loc<0 | time_at_loc>3335){
+          exposure[ind,f,y]<-exposure[ind,f,y]
+       } else{
+         exposure[ind,f,y]<-exposure[ind,f,y]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
+       }
      }
    }
 }
@@ -111,13 +124,15 @@ for(f in 1:5){
 
      #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
      #If the fish is in the area after the time we care about, then obviously it's not exposed to any fisheries.
-     if (time_at_loc>3336){
-       exposure[ind,f]<-exposure[ind,f]
+     if (time_at_loc>3335){
+       exposure[ind,f,y]<-exposure[ind,f,y]
       } else {
-       exposure[ind,f]<-exposure[ind,f]+fishery_array[loc,round(time_at_loc),f]
+       exposure[ind,f,y]<-exposure[ind,f,y]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
       }
      }
    }
+}
+yr=yr+1
 }
 
 ##############################
@@ -128,25 +143,35 @@ setwd(plots_dir)
 
 #save(exposure, file="2014AreaE.Rdata")
 
-pdf(file = "Exposure_Plots.pdf")
+pdf(file = "Exposure by Fishery.pdf")
 
 #plot(density(exposure))
+par(mfcol=c(5,5))
+par(mar=c(2,2,1,1))
+yr=2004
+for(y in 1:10){
+hist(exposure[,1,y], breaks=50, main=paste("Area B ",yr),xlim=range(0,200))
+hist(exposure[,2,y], breaks=50, main=paste("Area D ",yr), xlim=range(0,200))
+hist(exposure[,3,y], breaks=50, main=paste("Area E ",yr), xlim=range(0,200))
+hist(exposure[,4,y], breaks=50, main=paste("Area G ",yr), xlim=range(0,200))
+hist(exposure[,5,y], breaks=50, main=paste("Area H ",yr), xlim=range(0,200))
+yr=yr+1
+}
+dev.off()
 
-hist(exposure[,1], main="Exposure to Area B Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
-hist(exposure[,2], main="Exposure to Area D Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
-hist(exposure[,3], main="Exposure to Area E Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
-hist(exposure[,4], main="Exposure to Area G Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
-hist(exposure[,5], main="Exposure to Area H Fisheries", xlab="Total exposure (hrs)", ylab="# of fish")
+pdf(file = "Exposure vs Passage Time.pdf")
 
-plot(passage_hour,exposure[,1], main="Exposure to Area B Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
-     ylab="Total exposure (hrs)")
-plot(passage_hour,exposure[,2], main="Exposure to Area D Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
-     ylab="Total exposure (hrs)")
-plot(passage_hour,exposure[,3], main="Exposure to Area E Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
-     ylab="Total exposure (hrs)")
-plot(passage_hour,exposure[,4], main="Exposure to Area G Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
-     ylab="Total exposure (hrs)")
-plot(passage_hour,exposure[,5], main="Exposure to Area H Fisheries \ncompared to run timing", xlab="Passage hour at Albion",
-     ylab="Total exposure (hrs)")
-
+par(mfcol=c(5,5))
+par(mar=c(2,2,1,1))
+yr=2004
+for(y in 1:10){
+  #Exposure to fisheries compared to run timing
+  #xlab="Passage hour at Albion"
+plot(passage_hour,exposure[,1,y], main=paste("Area B ",yr))
+plot(passage_hour,exposure[,2,y], main=paste("Area D ",yr))
+plot(passage_hour,exposure[,3,y], main=paste("Area E ",yr))
+plot(passage_hour,exposure[,4,y], main=paste("Area G ",yr))
+plot(passage_hour,exposure[,5,y], main=paste("Area H ",yr))
+yr=yr+1
+}
 dev.off()
