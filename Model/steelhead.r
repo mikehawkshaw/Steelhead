@@ -250,6 +250,24 @@ barplot(total_exposed[,y]/1000*100, main=yr, xlab="",ylab="",
 }
 dev.off()
 
+#Percentage of run exposed to all fisheries by year
+
+#Get # of fish exposed to any fishery
+
+is_exposed<-0
+total_exposed_all_fisheries<-rep(0,13)
+for(y in 1:13){
+  for(ind in 1:n_fish){
+     for(f in 1:5){
+        is_exposed <- is_exposed + exposure[ind,f,y]
+     }
+    if(is_exposed>0){
+      total_exposed_all_fisheries[y]<- total_exposed_all_fisheries[y] + 1
+     }
+  }
+}
+###This results in 100% of the population being exposed to at least one fishery each year, so not bothering with a plot.
+
 #-----------------------Generate line plots for Mike -------------------------------
 
 pdf(file="Population Exposure by Fishery - Line plots.pdf")
