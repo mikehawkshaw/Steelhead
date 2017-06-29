@@ -1,6 +1,5 @@
 #Model to estimate 50% run timing for steelhead over time series
 
-setwd("C:/DFO-MPO/github/Steelhead/Model")
 source("directories.R")
 library("xtable")
 library(R2OpenBUGS)
@@ -30,6 +29,7 @@ inits<- function()
     list (theta=rnorm(N,0,100),mu.theta=rnorm(1,0,100),sigma.theta=runif(1,0,100))
 parameters<-c("theta","mu.theta", "sigma.theta")
 
+setwd(model_dir)
 runtiming<- bugs(data,inits,parameters,model.file="runtimingHBM_OpenBUGS.txt",n.chains=3,n.iter=10000)
 
 runtiming$summary
