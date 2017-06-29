@@ -9,6 +9,6 @@ setwd(data_dir)
 albion_annual<-read.table("steelhead_albion.csv",header=T, sep=",")
 
 #Change back to model directory
-setwd(data_dir)
+setwd(model_dir)
 
 
