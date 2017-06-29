@@ -10,8 +10,9 @@ transformed data{
 
   real normalized_catch[n_days,n_years];
 for (y in 1:n_years){
+    
 for (d in 1:n_days){
-
+    normalized_catch[d,y]=
 }
 }
 
@@ -28,6 +29,8 @@ parameters {
 } 
 
 model {
+
+  real annual[n_years];
 
 #hyper_parameters
 
@@ -49,8 +52,8 @@ model {
   for (y in 1:n_years){
     for(d in 1:n_days)
 {
-    pred_abundance=();
-    obs_abundance=normailzed_catch[d,y]
+    pred_abundance=;
+    catch~normal(pred_abundamce*annual[],sigma[])
 }
 }
 
