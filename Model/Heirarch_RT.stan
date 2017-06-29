@@ -7,6 +7,14 @@ data {
   real catch[n_days,n_years];
 }
 transformed data{
+
+  real normalized_catch[n_days,n_years];
+for (y in 1:n_years){
+for (d in 1:n_days){
+
+}
+}
+
 }
 parameters {
 #hyper_parameters
@@ -31,14 +39,20 @@ model {
 
 #annual parameters
   for(y in 1:n_years){
-    rt_m[y]~normal(mu_rt_m,sig_rt_m)
-    rt_sd[y]~normal(mu_rt_sd,sig_rt_sd)
+    rt_m[y]~normal(mu_rt_m,sig_rt_m);
+    rt_sd[y]~normal(mu_rt_sd,sig_rt_sd);
 
 }
 
 #model
 
-
+  for (y in 1:n_years){
+    for(d in 1:n_days)
+{
+    pred_abundance=();
+    obs_abundance=normailzed_catch[d,y]
+}
+}
 
 }
 generated quantities {
