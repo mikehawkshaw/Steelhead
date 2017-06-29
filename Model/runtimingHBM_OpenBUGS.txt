@@ -1,0 +1,14 @@
+model{
+
+for(i in 1:N){
+   m[i]~dnorm(theta[i],tau.m[i])
+   theta[i]~dnorm(mu.theta,tau.theta)
+   tau.m[i] <- pow(s[i],-2)
+  }
+
+  #Priors
+  mu.theta~dnorm(0,1.0E-6)
+  tau.theta <- pow(sigma.theta, -2)
+  sigma.theta ~ dunif(0,1000)
+
+}
