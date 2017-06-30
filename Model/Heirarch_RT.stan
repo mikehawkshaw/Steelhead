@@ -8,14 +8,6 @@ data {
 }
 transformed data{
 
-  real normalized_catch[n_days,n_years];
-for (y in 1:n_years){
-    
-for (d in 1:n_days){
-    normalized_catch[d,y]=
-}
-}
-
 }
 parameters {
 #hyper_parameters
@@ -23,6 +15,8 @@ parameters {
   real<lower=0.1,upper=5> sig_rt_m;
   real<lower=0.5,upper=4> mu_rt_sd;
   real<lower=0.1,upper=5> sig_rt_sd;
+  real annual[n_years];
+  real  [n_years];  
 #annual parameters
   real<lower=0.5,upper=4> rt_m[n_years];
   real<lower=1e-9,upper=1e-2> rt_sd[n_years];
@@ -30,15 +24,15 @@ parameters {
 
 model {
 
-  real annual[n_years];
+  real pred_abundance[n_days,n_years];
 
 #hyper_parameters
 
-  mu_rt_m~uniform();
-  sig_rt_m~uniform();
-  mu_rt_sd~uniform();
-  sig_rt_sd~uniform();
-
+  mu_rt_m~uniform(1,365);
+  sig_rt_m~uniform(1,100);
+  mu_rt_sd~uniform(1,50);
+  sig_rt_sd~uniform(1,50);
+  annual~uniform(1e-6,1e6);
 
 #annual parameters
   for(y in 1:n_years){
@@ -52,8 +46,8 @@ model {
   for (y in 1:n_years){
     for(d in 1:n_days)
 {
-    pred_abundance=;
-    catch~normal(pred_abundamce*annual[],sigma[])
+    pred_abundance[d,y]=1/(1+exp(-1.7*(d-rt_m[y])/(rt_sd[y])));
+    if(fishery_index[d,y]==1){catch~normal(pred_abundance[d,y]*annual[y],sigma)}
 }
 }
 
