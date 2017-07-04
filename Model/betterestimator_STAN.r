@@ -105,4 +105,9 @@ fit_ggobj<-ggs(fit)
 
 mu_sd_summary <- summary(fit, pars = c("mu_rt_m", "sig_rt_m","mu_rt_sd", "sig_rt_sd"), probs = c(0.1,0.5, 0.9))$summary
 print(mu_sd_summary) #use these values for the Steelhead Run Timing inputs to the steelhead.r file  
+par(mfcol=c(2,2))
+plot(fit, pars=c("mu_rt_m"))
+plot(fit, pars=c("sig_rt_m"))
+plot(fit, pars=c("mu_rt_sd"))
+plot(fit, pars=c("sig_rt_sd"))
 
