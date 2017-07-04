@@ -15,8 +15,6 @@ setwd(data_dir)
 #model
 
 stanmodelcode <- "
-#Heirarch_RT.stan
-
 data {
 int<lower=1> n_days;
 int<lower=0> n_years;
