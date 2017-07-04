@@ -8,7 +8,7 @@ library(ggmcmc)
 library(extrafont)
 
 #extrafont::font_import() Getting a weird error message to do with default fonts - this fixed it but might be unique to my computer
-extrafont::loadfonts()
+extrafont::loadfonts() # need some fonts tloaded to stop errors w/ default font settings in Rmd
 
 setwd(data_dir)
 
