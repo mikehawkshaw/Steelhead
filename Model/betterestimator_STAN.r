@@ -3,6 +3,13 @@
 source("directories.R")
 library("xtable")
 library(rstan)
+library(ggplot2)
+library(ggmcmc)
+library(extrafont)
+
+#extrafont::font_import() Getting a weird error message to do with default fonts - this fixed it but might be unique to my computer
+extrafont::loadfonts()
+
 setwd(data_dir)
 
 #model
@@ -16,7 +23,7 @@ int<lower=0> n_years;
 int index[n_days,n_years];
 real obs_catch[n_days,n_years];
 }
-transformed data{
+transformed data{fit
 
 }
 parameters {
@@ -81,7 +88,14 @@ for(i in 1:dim(catch)[2])
 colSums(catch, na.rm=T)
 fisheries_index<-matrix(1,103,19)
 fisheries_index[is.na(catch)]<-0
-catch[is.na(catch)]<-99  #STAN hates NAs
+
+for(i in 1:dim(catch)[2])
+{
+  catch[,i]<-catch[,i]*mean(fisheries_index[,i])
+}
+
+
+catch[is.na(catch)]<-999  #STAN hates NAs #Winbugs/OpenBugs it would be better to leave NA's
 #Change back to model directory
 setwd(model_dir)
 
@@ -89,10 +103,8 @@ dat<-list(n_days=n_days, n_years=n_years, index=fisheries_index, obs_catch=catch
 inits<-list(list(mu_rt_m=290,sig_rt_m=20,mu_rt_sd=15,sig_rt_sd=8),list(mu_rt_m=280,sig_rt_m=22,mu_rt_sd=13,sig_rt_sd=7),list(mu_rt_m=300,sig_rt_m=10,mu_rt_sd=10,sig_rt_sd=9))
 
 fit <- stan(model_code = stanmodelcode, data = dat, iter = 5000, chains = 3,  verbose = TRUE) 
+fit_ggobj<-ggs(fit)
 
-
-
-
-
-
+mu_sd_summary <- summary(fit, pars = c("mu_rt_m", "sig_rt_m","mu_rt_sd", "sig_rt_sd"), probs = c(0.1,0.5, 0.9))$summary
+print(mu_sd_summary) #use these values for the Steelhead Run Timing inputs to the steelhead.r file  
 
