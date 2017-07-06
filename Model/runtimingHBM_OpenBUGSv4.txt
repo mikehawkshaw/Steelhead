@@ -1,0 +1,29 @@
+model{
+
+#Likelihood
+
+#n_years
+for(y in 1:n_years){
+
+#n_days
+for(d in 1:n_days){
+   obs_abund[d,y]~dnorm(pred_abund[d,y],0.000001)
+  pred_abund[d,y] <-(1/(sigma.year[y]*pow(22/7*2,0.5)))*exp(-pow(((d+244)-mu.year[y]),2)/(2*pow(sigma.year[y],2)))
+ }
+}
+
+#n_years
+for(y in 1:n_years){
+
+  mu.year[y]~dnorm(mu_rt_m,sig_rt_m)
+  sigma.year[y]~dnorm(mu_rt_sd,sig_rt_sd)
+}
+
+#Hyper-priors
+
+mu_rt_m ~ dunif(240,300)
+sig_rt_m ~ dunif(0,60)
+mu_rt_sd ~ dunif(0,50)
+sig_rt_sd ~ dunif(0,50)
+
+}
