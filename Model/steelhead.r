@@ -58,12 +58,16 @@ for(y in 1:13){
 seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j"))
 
 ################################################################################################
-#Population characteristics (these are the hypothesis about the population that will be tested)
+#Population characteristics (these are the hypotheses about the population that will be tested)
 ################################################################################################
 
 #Run-timing of the population. Based on mean and SD calculated in file "badestimator.r"
-rt_mean<-mean(sh_runtiming$mean)-seasonstart_doy #subtract season start day to put in correct position in matrix
-rt_sd<-mean(sh_runtiming$sd)
+#rt_mean<-mean(sh_runtiming$mean)-seasonstart_doy #subtract season start day to put in correct position in matrix
+#rt_sd<-mean(sh_runtiming$sd)
+
+#Run timing based on Bayesian estimator
+rt_mean<-288.2323-seasonstart_doy #subtract season start day to put in correct position in matrix
+rt_sd<-3.395459
 
 #passage_date = the date that the fish passes Albion
 passage_date<-(pmax(30,pmin(140,rnorm(fish,rt_mean,rt_sd))))
