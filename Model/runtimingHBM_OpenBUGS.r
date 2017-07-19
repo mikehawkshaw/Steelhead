@@ -84,13 +84,13 @@ HPDinterval(line.coda2)
 plot(line.coda)
 traceplot(line.coda)
 
+p = albion_annual[,i]/sum(albion_annual[,i],na.rm=T)
 
-
-pth<-dnorm(albion_annual[,1],mean(mu),sd(sigma.year))
+pth<-dnorm(albion_annual[,1],mean(mu_rt_m),mean(mu_rt_sd))
 par(mar=c(4,4,2,1))
 plot(albion_annual[,1],p,type="b", col="blue",main="50% estimate of steelhead run timing",xlab="Julian Date", ylab="Corrected Albion Catch",bty="l")
 lines(albion_annual[,1],pth, col="dark red",lwd=2)
 
 #Get run timing estimates
-mean(mu.theta)
-sd(sigma.theta)
+mean(mu_rt_m)
+mean(mu_rt_sd)
