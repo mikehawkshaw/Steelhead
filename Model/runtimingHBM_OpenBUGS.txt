@@ -1,14 +1,28 @@
 model{
 
-for(i in 1:N){
-   m[i]~dnorm(theta[i],tau.m[i])
-   theta[i]~dnorm(mu.theta,tau.theta)
-   tau.m[i] <- pow(s[i],-2)
+#Likelihood
+#n_years
+for(y in 1:n_years){
+   #n_days
+   for(d in 1:n_days){
+    obs_abund[d,y]~dnorm(pred_abund[d,y],tau.c)
+    pred_abund[d,y] <-(1/(rt_sd[y]*pow(22/7*2,0.5)))*exp(-pow(((d+243)-rt_m[y]),2)/(2*pow(rt_sd[y],2)))
   }
+  rt_m[y]~dnorm(mu_rt_m,tau_rt_m)
+  rt_sd[y]~dnorm(mu_rt_sd,tau_rt_sd)
+}
 
-  #Priors
-  mu.theta~dnorm(0,1.0E-6)
-  tau.theta <- pow(sigma.theta, -2)
-  sigma.theta ~ dunif(0,1000)
+#Hyper-priors
+
+tau.c ~ dgamma(0.001,0.001)
+sigma <- 1/sqrt(tau.c)
+
+mu_rt_m ~ dunif(240,300)
+tau_rt_m ~ dgamma(0.001,0.001)
+sigma_rt_m <- 1/sqrt(tau_rt_m)
+
+mu_rt_sd ~ dunif(0,50)
+tau_rt_sd ~ dgamma(0.001,0.001)
+sigma_rt_sd <- 1/sqrt(tau_rt_sd)
 
 }
