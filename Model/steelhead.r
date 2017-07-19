@@ -66,8 +66,8 @@ seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j")
 #rt_sd<-mean(sh_runtiming$sd)
 
 #Run timing based on Bayesian estimator
-rt_mean<-288.2323-seasonstart_doy #subtract season start day to put in correct position in matrix
-rt_sd<-3.395459
+rt_mean<-282.131681-seasonstart_doy #subtract season start day to put in correct position in matrix
+rt_sd<-16.510714
 
 #passage_date = the date that the fish passes Albion
 passage_date<-(pmax(30,pmin(140,rnorm(fish,rt_mean,rt_sd))))
