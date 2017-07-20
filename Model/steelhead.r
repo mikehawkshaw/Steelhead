@@ -43,10 +43,11 @@ n_hours<-3336
 #IBM like model
 ###################################
 n_fish<-1000
+n_reps<-100
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
-exposure<-array(as.numeric(NA),dim=c(n_fish,5,13,10))
+exposure<-array(0,dim=c(n_fish,5,13,n_reps))
 speeds<-rep(0,n_fish)
 passage_date<-rep(0,n_fish)
 
@@ -65,11 +66,13 @@ rt_sd<-16.510714
 rt_sd_sd<-5.970674
 
 #cumulative and daily proportions of the run vulnerable to each fishery
-m_vec<-rnorm(10,rt_mean,rt_mean_sd) 
-s_vec<-rnorm(10,rt_sd,rt_sd_sd)
+m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd) 
+s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
 
-for(i in 1:10){
-  
+#Start the clock
+ptm <- proc.time()
+
+for(i in 1:n_reps){
   
 yr=2004 #re-initialize year variable
 
@@ -98,19 +101,15 @@ for(f in 1:5) {
    #Loop through each fish
 
    for(ind in 1:n_fish){
-  
-     exposure[ind,f,y,i]<-0
+     
      for(loc in 1:494){ #494 is km where Albion located
-    
-       passage_time<-passage_hour[ind]
-       time_at_loc<-passage_time-(494-loc)/speeds[ind]
+       
+       time_at_loc<-passage_hour[ind]-(494-loc)/speeds[ind]
       
        #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
        #If the fish is in the area before the time we care about, then obviously it's not exposed to any fisheries. May want to
        #edit later so that we can run it longer. Will need to make the opening matrices larger.
-       if (time_at_loc<0 | time_at_loc>3335){
-          exposure[ind,f,y,i]<-exposure[ind,f,y,i]
-       } else{
+       if (time_at_loc>0 & time_at_loc<3335){
          exposure[ind,f,y,i]<-exposure[ind,f,y,i]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
        }
      }
@@ -126,20 +125,15 @@ for(f in 1:5) {
 for(f in 1:5){
 
    #Loop through each fish
-
    for(ind in 1:n_fish)
    {
-
      for(loc in 495:515){ #From Albion to Mission, not including Albion start
-
-     passage_time<-passage_hour[ind]
-     time_at_loc<-passage_time+(loc-494)/speeds[ind]
+       
+     time_at_loc<-passage_hour[ind]+(loc-494)/speeds[ind]
 
      #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
      #If the fish is in the area after the time we care about, then obviously it's not exposed to any fisheries.
-     if (time_at_loc>3335){
-       exposure[ind,f,y,i]<-exposure[ind,f,y,i]
-      } else {
+     if (time_at_loc<3335){
        exposure[ind,f,y,i]<-exposure[ind,f,y,i]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
       }
      }
@@ -148,7 +142,8 @@ for(f in 1:5){
 yr=yr+1
 }
 }
-
+#Stop the clock
+proc.time() - ptm
 
 ##############################
 #Print plots to pdf file
@@ -208,8 +203,8 @@ for(y in 1:13){
 #Get # of fish exposed by fishery
 
 
-total_exposed<-array(as.numeric(NA),dim=c(5,13,10))
-for(i in 1:10){
+total_exposed<-array(as.numeric(NA),dim=c(5,13,n_reps))
+for(i in 1:n_reps){
  for(y in 1:13){
   for(f in 1:5){
    total_exposed[f,y,i]<-sum(exposure[,f,y,i]>0)
