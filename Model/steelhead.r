@@ -43,13 +43,37 @@ n_hours<-3336
 #IBM like model
 ###################################
 n_fish<-1000
+n_reps<-100
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
-exposure<-array(as.numeric(NA),dim=c(n_fish,5,13))
+exposure<-array(0,dim=c(n_fish,5,13,n_reps))
 speeds<-rep(0,n_fish)
 passage_date<-rep(0,n_fish)
 
+################################################################################################
+#Population characteristics (these are the hypotheses about the population that will be tested)
+################################################################################################
+
+#Run-timing of the population. Based on mean and SD calculated in file "badestimator.r"
+#rt_mean<-mean(sh_runtiming$mean)-seasonstart_doy #subtract season start day to put in correct position in matrix
+#rt_sd<-mean(sh_runtiming$sd)
+
+#Run timing based on Bayesian estimator
+rt_mean<-282.131681-seasonstart_doy #subtract season start day to put in correct position in matrix
+rt_mean_sd<-12.416564
+rt_sd<-16.510714
+rt_sd_sd<-5.970674
+
+#cumulative and daily proportions of the run vulnerable to each fishery
+m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd) 
+s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
+
+#Start the clock
+ptm <- proc.time()
+
+for(i in 1:n_reps){
+  
 yr=2004 #re-initialize year variable
 
 #Loop through each year
@@ -57,16 +81,8 @@ for(y in 1:13){
 #Get day of year for July 15 of year of interest (season start)
 seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j"))
 
-################################################################################################
-#Population characteristics (these are the hypothesis about the population that will be tested)
-################################################################################################
-
-#Run-timing of the population. Based on mean and SD calculated in file "badestimator.r"
-rt_mean<-mean(sh_runtiming$mean)-seasonstart_doy #subtract season start day to put in correct position in matrix
-rt_sd<-mean(sh_runtiming$sd)
-
 #passage_date = the date that the fish passes Albion
-passage_date<-(pmax(30,pmin(140,rnorm(fish,rt_mean,rt_sd))))
+passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i],s_vec[i]))))
 passage_hour<-passage_date*24 #convert to hours. Hour 0 = midnight July 15
 
 #Speed that the fish travel. Assumptions based on speed of other salmonids.
@@ -85,20 +101,16 @@ for(f in 1:5) {
    #Loop through each fish
 
    for(ind in 1:n_fish){
-  
-     exposure[ind,f,y]<-0
+     
      for(loc in 1:494){ #494 is km where Albion located
-    
-       passage_time<-passage_hour[ind]
-       time_at_loc<-passage_time-(494-loc)/speeds[ind]
+       
+       time_at_loc<-passage_hour[ind]-(494-loc)/speeds[ind]
       
        #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
        #If the fish is in the area before the time we care about, then obviously it's not exposed to any fisheries. May want to
        #edit later so that we can run it longer. Will need to make the opening matrices larger.
-       if (time_at_loc<0 | time_at_loc>3335){
-          exposure[ind,f,y]<-exposure[ind,f,y]
-       } else{
-         exposure[ind,f,y]<-exposure[ind,f,y]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
+       if (time_at_loc>0 & time_at_loc<3335){
+         exposure[ind,f,y,i]<-exposure[ind,f,y,i]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
        }
      }
    }
@@ -113,27 +125,25 @@ for(f in 1:5) {
 for(f in 1:5){
 
    #Loop through each fish
-
    for(ind in 1:n_fish)
    {
-
      for(loc in 495:515){ #From Albion to Mission, not including Albion start
-
-     passage_time<-passage_hour[ind]
-     time_at_loc<-passage_time+(loc-494)/speeds[ind]
+       
+     time_at_loc<-passage_hour[ind]+(loc-494)/speeds[ind]
 
      #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
      #If the fish is in the area after the time we care about, then obviously it's not exposed to any fisheries.
-     if (time_at_loc>3335){
-       exposure[ind,f,y]<-exposure[ind,f,y]
-      } else {
-       exposure[ind,f,y]<-exposure[ind,f,y]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
+     if (time_at_loc<3335){
+       exposure[ind,f,y,i]<-exposure[ind,f,y,i]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
       }
      }
    }
 }
 yr=yr+1
 }
+}
+#Stop the clock
+proc.time() - ptm
 
 ##############################
 #Print plots to pdf file
@@ -191,15 +201,30 @@ for(y in 1:13){
 
 
 #Get # of fish exposed by fishery
-yr=2004
 
-total_exposed<-array(as.numeric(NA),dim=c(5,13))
+
+total_exposed<-array(as.numeric(NA),dim=c(5,13,n_reps))
+for(i in 1:n_reps){
+ for(y in 1:13){
+  for(f in 1:5){
+   total_exposed[f,y,i]<-sum(exposure[,f,y,i]>0)
+   }
+  }
+}
+
+mean_exposed<-array(as.numeric(NA),dim=c(5,13))
+sd_exposed<-array(as.numeric(NA),dim=c(5,13))
+
+mean_perc_exposed<-array(as.numeric(NA),dim=c(5,13))
+sd_perc_exposed<-array(as.numeric(NA),dim=c(5,13))
 
 for(y in 1:13){
   for(f in 1:5){
-   total_exposed[f,y]<-sum(exposure[,f,y]>0)
-   }
-yr=yr+1
+    mean_exposed[f,y]<-mean(total_exposed[f,y,])
+    mean_perc_exposed[f,y]<-mean_exposed[f,y]/1000*100
+    sd_exposed[f,y]<-sd(total_exposed[f,y,])
+    sd_perc_exposed[f,y]<-sd_exposed[f,y]/1000*100
+  }
 }
 
 
@@ -275,7 +300,7 @@ par(mfrow=c(2,3),mar=c(3,3,1,1), oma=c(5,5,3,1))
 
 plot(total_exposed[1,], main="Area B", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,1000))
   axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1))
-  points(total_exposed[1,])
+  points(total_exposed[1,,])
 plot(total_exposed[2,], main="Area D", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,1000))
   axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1))
   points(total_exposed[2,])
@@ -350,4 +375,39 @@ for(y in 1:13){
     mtext(text="Population Percent Exposure by Year",side=3,line=1,outer=TRUE)
   }
 }
+dev.off()
+
+
+#--------Plots of probability of exposure with error bars
+
+#Percentage of run exposed by fishery
+
+x<-1:13
+pdf(file="Population Percent Exposure by Fishery - Line plots w Error bars.pdf")
+par(mfrow=c(2,3),mar=c(3,3,1,1), oma=c(5,5,3,1))
+
+plot(mean_perc_exposed[1,], main="Area B", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
+  points(mean_perc_exposed[1,])
+  arrows(x, mean_perc_exposed[1,]-sd_perc_exposed[1,], x, mean_perc_exposed[1,]+sd_perc_exposed[1,], length=0.05, angle=90, code=3)
+plot(mean_perc_exposed[2,], main="Area D", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
+  points(mean_perc_exposed[2,])
+  arrows(x, mean_perc_exposed[2,]-sd_perc_exposed[2,], x, mean_perc_exposed[2,]+sd_perc_exposed[2,], length=0.05, angle=90, code=3)
+plot(mean_perc_exposed[3,], main="Area E", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
+  points(mean_perc_exposed[3,])
+  arrows(x, mean_perc_exposed[3,]-sd_perc_exposed[3,], x, mean_perc_exposed[3,]+sd_perc_exposed[3,], length=0.05, angle=90, code=3)
+plot(mean_perc_exposed[4,], main="Area G", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
+  points(mean_perc_exposed[4,])
+  arrows(x, mean_perc_exposed[4,]-sd_perc_exposed[4,], x, mean_perc_exposed[4,]+sd_perc_exposed[4,], length=0.05, angle=90, code=3)
+plot(mean_perc_exposed[5,], main="Area H", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
+  points(mean_perc_exposed[5,])
+  arrows(x, mean_perc_exposed[5,]-sd_perc_exposed[5,], x, mean_perc_exposed[5,]+sd_perc_exposed[5,], length=0.05, angle=90, code=3)
+
+mtext(text="Year",side=1,line=1,outer=TRUE)
+mtext(text="% Exposed",side=2,line=1,outer=TRUE)
+mtext(text="Population Percent Exposure by Fishery",side=3,line=1,outer=TRUE)
 dev.off()

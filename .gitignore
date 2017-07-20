@@ -21,3 +21,5 @@ directories.R
 myNotes.*
 .Rproj.user
 .Rapp.history
+*.doc
+*.docx
