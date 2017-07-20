@@ -21,7 +21,7 @@ int<lower=0> n_years;
 int index[n_days,n_years];
 real obs_catch[n_days,n_years];
 }
-transformed data{fit
+transformed data{
 
 }
 parameters {
