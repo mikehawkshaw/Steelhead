@@ -43,7 +43,7 @@ n_hours<-3336
 #IBM like model
 ###################################
 n_fish<-1000
-n_reps<-100
+n_reps<-1000
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
@@ -59,7 +59,7 @@ passage_date<-rep(0,n_fish)
 #rt_mean<-mean(sh_runtiming$mean)-seasonstart_doy #subtract season start day to put in correct position in matrix
 #rt_sd<-mean(sh_runtiming$sd)
 
-#Run timing based on Bayesian estimator
+#Run timing based on Bayesian estimaior
 rt_mean<-282.131681-seasonstart_doy #subtract season start day to put in correct position in matrix
 rt_mean_sd<-12.416564
 rt_sd<-16.510714
@@ -73,6 +73,7 @@ s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
 ptm <- proc.time()
 
 for(i in 1:n_reps){
+set.seed(i)
   
 yr=2004 #re-initialize year variable
 
