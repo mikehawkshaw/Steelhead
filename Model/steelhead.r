@@ -4,6 +4,7 @@
 #read in data
 source("directories.R")
 library("xtable")
+library("svMisc")
 setwd(data_dir)
 
 ###########################################
@@ -43,7 +44,7 @@ n_hours<-3336
 #IBM like model
 ###################################
 n_fish<-1000
-n_reps<-1000
+n_reps<-2
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
@@ -142,6 +143,9 @@ for(f in 1:5){
 }
 yr=yr+1
 }
+  progress(i,progress.bar=TRUE)
+  Sys.sleep(0.01)
+  if (i==n_reps) cat("Done!\n")
 }
 #Stop the clock
 proc.time() - ptm
