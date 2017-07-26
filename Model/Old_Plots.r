@@ -1,3 +1,36 @@
+pdf(file = "Exposure by Fishery.pdf")
+
+#plot(density(exposure))
+par(mfcol=c(5,5))
+par(mar=c(2,2,1,1))
+yr=2004
+for(y in 1:13){
+  hist(exposure[,1,y], breaks=50, main=paste("Area B ",yr),xlim=range(0,200))
+  hist(exposure[,2,y], breaks=50, main=paste("Area D ",yr), xlim=range(0,200))
+  hist(exposure[,3,y], breaks=50, main=paste("Area E ",yr), xlim=range(0,200))
+  hist(exposure[,4,y], breaks=50, main=paste("Area G ",yr), xlim=range(0,200))
+  hist(exposure[,5,y], breaks=50, main=paste("Area H ",yr), xlim=range(0,200))
+  yr=yr+1
+}
+dev.off()
+
+pdf(file = "Exposure vs Passage Time.pdf")
+
+par(mfcol=c(5,5))
+par(mar=c(2,2,1,1))
+yr=2004
+for(y in 1:13){
+  #Exposure to fisheries compared to run timing
+  #xlab="Passage hour at Albion"
+  plot(passage_hour,exposure[,1,y], main=paste("Area B ",yr))
+  plot(passage_hour,exposure[,2,y], main=paste("Area D ",yr))
+  plot(passage_hour,exposure[,3,y], main=paste("Area E ",yr))
+  plot(passage_hour,exposure[,4,y], main=paste("Area G ",yr))
+  plot(passage_hour,exposure[,5,y], main=paste("Area H ",yr))
+  yr=yr+1
+}
+dev.off()
+
 #--------------Generate barplots---------------------
 
 pdf(file="Population Exposure by Fishery - Barplots.pdf")
