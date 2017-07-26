@@ -257,7 +257,17 @@ for(y in 1:13){
 
 #------------Get cumulative exposure to fisheries
 
-
+if(data_source=="Commercial"){
+  
+  cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,n_reps))
+  for(i in 1:n_reps){
+    for(y in 1:13){
+      for(n in 1:n_fish){
+        cml_exposure[n,y,i]<-sum(exposure[n,,y,i]>0)
+      }
+    }
+  }
+}
 
 #------------Get iterative exposure to fisheries (Area B then D then H then E/BPM then APM…)
 
