@@ -265,6 +265,7 @@ for(y in 1:13){
 if(data_source=="Commercial"){
   
   cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,n_reps))
+  
   for(i in 1:n_reps){
     for(y in 1:13){
       for(n in 1:n_fish){
@@ -273,15 +274,26 @@ if(data_source=="Commercial"){
     }
   }
 }else if(data_source=="FN"){
+  exposure_temp<-array(as.numeric(NA),dim=c(n_fish,n_fisheries-1,13,n_reps))
+  
+  exposure_temp[,1,,]<-exposure[,1,,]
+  exposure_temp[,2,,]<-exposure[,2,,]+exposure[,3,,]
+  exposure_temp[,3,,]<-exposure[,4,,]
+  
   cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,n_reps))
+  
   for(i in 1:n_reps){
     for(y in 1:13){
       for(n in 1:n_fish){
-        cml_exposure[n,y,i]<-sum(exposure[n,,y,i]>0)
+        cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i]>0)
       }
     }
   }
+}else{ #data_source=="REC"
+  
 }
+
+rm(exposure_temp) #takes up a lot of space, might as well remove
 
 #------------Get iterative exposure to fisheries (Area B then D then H then E/BPM then APM…)
 
