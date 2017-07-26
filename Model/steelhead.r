@@ -1,5 +1,5 @@
 #steelhead.r
-#exposure model for steelhead
+#Steelhead Predictors of In-river Timing and Exposure models
 
 #read in data
 source("directories.R")
@@ -89,16 +89,6 @@ passage_date<-rep(0,n_fish)
 #Population characteristics (these are the hypotheses about the population that will be tested)
 ################################################################################################
 
-#Run-timing of the population. Based on mean and SD calculated in file "badestimator.r"
-#rt_mean<-mean(sh_runtiming$mean)-seasonstart_doy #subtract season start day to put in correct position in matrix
-#rt_sd<-mean(sh_runtiming$sd)
-
-#Run timing based on Bayesian estimaior
-rt_mean<-282.131681-seasonstart_doy #subtract season start day to put in correct position in matrix
-rt_mean_sd<-12.416564
-rt_sd<-16.510714
-rt_sd_sd<-5.970674
-
 #cumulative and daily proportions of the run vulnerable to each fishery
 m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd) 
 s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
@@ -115,6 +105,18 @@ yr=2004 #re-initialize year variable
 for(y in 1:13){
 #Get day of year for July 15 of year of interest (season start)
 seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j"))
+
+#Run timing based on Bayesian estimator (grand mean)
+#rt_mean<-282.131681-seasonstart_doy #subtract season start day to put in correct position in matrix
+#rt_mean_sd<-12.416564
+#rt_sd<-16.510714
+#rt_sd_sd<-5.970674
+
+#Run-timing of the population. Based on mean and SD calculated with Bayesian estimator for each year.
+rt_mean<-sh_runtiming$rt_mean[sh_runtiming$year==yr]-seasonstart_doy #subtract season start day to put in correct position in matrix
+rt_mean_sd<-sh_runtiming$rt_mean_sd[sh_runtiming$year==yr]
+rt_sd<-sh_runtiming$rt_sd[sh_runtiming$year==yr]
+rt_sd_sd<-sh_runtiming$rt_sd_sd[sh_runtiming$year==yr]
 
 #passage_date = the date that the fish passes Albion
 passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i],s_vec[i]))))
