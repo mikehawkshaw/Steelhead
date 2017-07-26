@@ -185,6 +185,9 @@ yr=yr+1
 #Stop the clock
 proc.time() - ptm
 
+#Save iterations - change file name as appropriate
+saveRDS(exposure,file="EO_exposure_1-100.RData")
+
 ##############################
 #Manipulate exposure data
 ##############################
@@ -261,6 +264,15 @@ for(y in 1:13){
 
 if(data_source=="Commercial"){
   
+  cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,n_reps))
+  for(i in 1:n_reps){
+    for(y in 1:13){
+      for(n in 1:n_fish){
+        cml_exposure[n,y,i]<-sum(exposure[n,,y,i]>0)
+      }
+    }
+  }
+}else if(data_source=="FN"){
   cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,n_reps))
   for(i in 1:n_reps){
     for(y in 1:13){
