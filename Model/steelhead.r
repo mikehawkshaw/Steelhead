@@ -184,45 +184,8 @@ yr=yr+1
 proc.time() - ptm
 
 ##############################
-#Print plots to pdf file
+#Manipulate exposure data
 ##############################
-
-setwd(plots_dir)
-
-#save(exposure, file="2014AreaE.Rdata")
-
-pdf(file = "Exposure by Fishery.pdf")
-
-#plot(density(exposure))
-par(mfcol=c(5,5))
-par(mar=c(2,2,1,1))
-yr=2004
-for(y in 1:13){
-hist(exposure[,1,y], breaks=50, main=paste("Area B ",yr),xlim=range(0,200))
-hist(exposure[,2,y], breaks=50, main=paste("Area D ",yr), xlim=range(0,200))
-hist(exposure[,3,y], breaks=50, main=paste("Area E ",yr), xlim=range(0,200))
-hist(exposure[,4,y], breaks=50, main=paste("Area G ",yr), xlim=range(0,200))
-hist(exposure[,5,y], breaks=50, main=paste("Area H ",yr), xlim=range(0,200))
-yr=yr+1
-}
-dev.off()
-
-pdf(file = "Exposure vs Passage Time.pdf")
-
-par(mfcol=c(5,5))
-par(mar=c(2,2,1,1))
-yr=2004
-for(y in 1:13){
-  #Exposure to fisheries compared to run timing
-  #xlab="Passage hour at Albion"
-plot(passage_hour,exposure[,1,y], main=paste("Area B ",yr))
-plot(passage_hour,exposure[,2,y], main=paste("Area D ",yr))
-plot(passage_hour,exposure[,3,y], main=paste("Area E ",yr))
-plot(passage_hour,exposure[,4,y], main=paste("Area G ",yr))
-plot(passage_hour,exposure[,5,y], main=paste("Area H ",yr))
-yr=yr+1
-}
-dev.off()
 
 #Get total exposure time by fishery
 #Not sure this is a useful metric, but it's here in case we decide to use it
@@ -237,8 +200,7 @@ for(y in 1:13){
   yr=yr+1
 }
 
-
-#Get # of fish exposed by fishery
+#-------------Get # of fish exposed by fishery
 
 total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,n_reps))
 for(i in 1:n_reps){
@@ -249,6 +211,8 @@ for(i in 1:n_reps){
   }
 }
 
+#Convert to average #/% fish exposed by fishery each year
+if(data_source=="Commercial"){
 mean_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
 sd_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
 
@@ -264,8 +228,8 @@ for(y in 1:13){
   }
 }
 
-#Change calculation sum DN/SN exposure:
-if(data_source=="FN"){
+#Change calculation to sum DN/SN exposure:
+}else if(data_source=="FN"){
   total_exposed<-array(as.numeric(NA),dim=c(n_fisheries-1,13,n_reps))
   for(i in 1:n_reps){
     for(y in 1:13){
@@ -289,12 +253,26 @@ if(data_source=="FN"){
       sd_perc_exposed[f,y]<-sd_exposed[f,y]/1000*100
     }
   }  
-  
 }
 
+#------------Get cumulative exposure to fisheries
+
+
+
+#------------Get iterative exposure to fisheries (Area B then D then H then E/BPM then APM…)
+
+
+##############################
+#Print plots to pdf file
+##############################
+
+setwd(plots_dir)
+
 #Percentage of run exposed by year
+###Need to edit
+if(data_source=="Commercial"){
 pdf(file="Population Percent Exposure by Year - Barplots.pdf")
-par(mfrow=c(3,2), oma=c(5,5,3,0), mar=c(2,2,2,2), xpd=FALSE)
+par(mfrow=c(1,1), oma=c(1,1,1,1), mar=c(2,2,2,2), xpd=FALSE)
 
 yr=2004
 for(y in 1:13){
@@ -308,7 +286,7 @@ barplot(total_exposed[,y]/1000*100, main=yr, xlab="",ylab="",
  }
 }
 dev.off()
-
+}
 #Percentage of run exposed to all fisheries by year
 
 #Get # of fish exposed to any fishery
