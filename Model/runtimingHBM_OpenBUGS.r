@@ -52,7 +52,7 @@ for(i in 1:dim(mod_catch)[1]){
 mod_catch[,1]<-as.numeric(mod_catch[,1])
 
 colnames(mod_catch)<-c("year","catch")
-mod_catch$day<- rep(seq(1,103,by=1),19)
+mod_catch$day<- rep(seq(1,n_days,by=1),n_years)
 
 #Change back to model directory
 setwd(model_dir)
