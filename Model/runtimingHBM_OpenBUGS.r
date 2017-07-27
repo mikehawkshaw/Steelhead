@@ -62,14 +62,15 @@ dat<-list(n_days=n_days,n_years=n_years,obs_abund=catch)
 inits<-list(list(mu_rt_m=290,tau_rt_m=1,mu_rt_sd=15,tau_rt_sd=1,tau.c=1),list(mu_rt_m=280,tau_rt_m=1,mu_rt_sd=13,tau_rt_sd=1,tau.c=1),list(mu_rt_m=300,tau_rt_m=1,mu_rt_sd=10,tau_rt_sd=1,tau.c=1))
 parameters<-c("rt_m","rt_sd","mu_rt_m","sigma_rt_m","mu_rt_sd","sigma_rt_sd","sigma")
 
-RT_fit<-bugs(data=dat,inits=inits,parameters.to.save=parameters,model.file="runtimingHBM_OpenBUGS.txt",n.chains=3,n.burnin=60000,n.iter=80000,debug=F)
+RT_fit<-bugs(data=dat,inits=inits,parameters.to.save=parameters,model.file="runtimingHBM_OpenBUGS.txt",n.chains=3,n.burnin=0,n.iter=80000,debug=F)
 
 # Make results available so can call individual parameter sims (sims.list)
 attach.bugs(RT_fit)
 print(RT_fit)
 caterplot(RT_fit,parms=c("rt_m","mu_rt_m"),reorder=F)
+caterplot(RT_fit,parms=c("rt_sd","mu_rt_sd"),reorder=F)
 
-#Alternate option for getting trace plots into R
+#----------------Alternate option for getting trace plots into R
 RT_fit<-bugs(data=dat,inits=inits,parameters.to.save=parameters,model.file="runtimingHBM_OpenBUGS.txt",n.chains=3,n.iter=80000,debug=F,codaPkg=T)
 
 ## Produce a CODA object from the lineout output
@@ -83,6 +84,7 @@ HPDinterval(line.coda2)
 ## Use CODA to produce diagnostic plots for the MCMC
 plot(line.coda)
 traceplot(line.coda)
+#---------------------------------------
 
 p = albion_annual[,i]/sum(albion_annual[,i],na.rm=T)
 
