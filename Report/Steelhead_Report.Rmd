@@ -9,32 +9,29 @@ output:
 ## Introduction
 
 An objective of the Southern BC Salmon Integrated Fisheries Management Plan is to minimize the impact of Canadian fisheries on Interior Fraser River (IFR) steelhead to increase spawner abundance. 
-For Fraser river commercial gill net fisheries, the strategy is to protect 80% of the IFR steelhead run with a high degree of certainty. 
-Steelhead are not targeted by Canadian commercial fisheries but are bycatch in some salmon-targeted fisheries, including Area B seine, Area D gillnet, Area E gillnet, Area G gillnet, and Area H troll (collectively referred to hereafter as Canadian commercial fisheries (CCF)). 
+For Fraser river commercial gill net fisheries, the strategy is to protect 80% of the IFR steelhead run with a high degree of certainty (IFMP 2017). 
+Steelhead are not targeted by Canadian fisheries but are bycatch in some salmon-targeted fisheries, including Area B seine, Area D gillnet, Area E gillnet, Area G gillnet, and Area H troll (collectively referred to hereafter as Canadian commercial fisheries (CCF)). Steelhead may also be bycatch in First Nation salmon-targeted fisheries, particularly in Economic Opportunity (EO) fisheries targeting late-run Fraser sockeye, Fraser pink and Southern Chum. These were divided into Below Port Mann drift net (BPM DN), Above Port Mann gillnet (APM GN), and Above Port Mann beach seine (APM BSn), and are collectively referred to hereafter as Canadian First Nation fisheries (CFNF). 
 The main management tool used to protect IFR steelhead from CCF in the Fraser River is to allow only a small window for chum fisheries such that 80% of the steelhead run can migrate through the fishing areas without being intercepted in CCF. 
-We explored extending this goal of protecting 80% of the steelhead run to other fisheries along the steelhead migration route. 
+We explored extending this goal of protecting 80% of the steelhead run to other commercial/EO fisheries along the steelhead migration route. The current analysis examines CCF and CFNF but could potentially be expanded to other fisheries as desired.
 **Our analysis of historic return patterns and fishery plans suggests that recent fishing plans do not meet this goal for all fisheries.** 
-The methods and results are described below.
 
-## Method  
+## Methods 
 
 **1. Characterize the Steelhead run in terms of return timing to Albion test fishery**  
 
 It is standard practice to use a normal distribution to represent the pattern of migrating salmon past a fixed point. 
-To characterize IFR steelhead migration, a normal distribution was fit using a Bayesian hierarchical approach to 19 years of steelhead catch at the Albion test fishery to estimate the 50% date and distribution of the migration timing (Figure 1). 
+To characterize IFR steelhead migration, a normal distribution was fit using a Bayesian hierarchical approach to 22 years (1994-2016) of steelhead catch at the Albion test fishery to estimate the 50% date and distribution of the migration timing each year (Figure 1). 
 The historic information from the Albion test fishery allows us to characterize the variability of the run timing of steelhead from year to year, and the Bayesian approach reduces uncertainty in the timing estimates when data is limited.  
 
 <!----These graphs need to be recreated---->
-![The distribution of calculated 50% dates (a) and the distribution of the widths of the reconstructed returns (b) to Albion are shown as both histograms (bars) and normal approximations of the distribution (red line). The 50% dates plotted against the spread of the runs (c) demonstrating no relationship between 50% date and spread of the return.  Data provided for 1995 to 2013.\label{figurelabel}](/DFO-MPO/github/Steelhead/Outputs/testing.png)  
+![The distribution of calculated 50% dates (a) and the distribution of the widths of the reconstructed returns (b) to Albion are shown as both histograms (bars) and normal approximations of the distribution (red line). The 50% dates plotted against the spread of the runs (c) demonstrating no relationship between 50% date and spread of the return.  Data provided for 1995 to 2016.\label{figurelabel}](/DFO-MPO/github/Steelhead/Outputs/testing.png)  
 
 **2. Characterize the fishing area and migration speed**  
 
-The current iteration of this model examines fisheries along the northern route and Fraser River (Area B, D, E, G, H), excluding the west coast of Vancouver Island. 
+The current iteration of this model examines fisheries along the northern route and Fraser River, excluding the west coast of Vancouver Island. This includes commercial fishing Areas B, D, E, G, H, and First Nation fisheries from Area 29 to Sawmill Creek.
 An approximate migration path through the fishing area was measured and binned into 1 km increments using the measuring tool in Google Earth (ref). 
 For example, Area 12-12 (Bate Passage) begins at km 33 and ends at km 38. 
-The starting point of migration through the CCF fisheries (km = 0) is the NW corner of Area 11-1 at Lat 51? 9'48.90"N Long 128? 4'8.10"W; 
-the migration route extends ~515 km ending at the eastern edge of Area 29 at Mission.(get lat/long)  
-
+The starting point of migration through the CCF fisheries (km = 0) is the NW corner of Area 11-1 (51°09'48.90" N, 128°04'8.10"W); the migration route examined extends ~625 km, ending at Sawmill Creek (49°36'42.87"N, 121°24'35.86"W).
 The reference point for IFR steelhead migration is the Albion test fishery 60.4 km upstream from the mouth of the Fraser River. 
 A variety of methods and sources provide migration speeds for steelhead, and rather than an exhaustive review of different estimates migration speeds, a hypothesis about swimming speed (20 km/day, assumed for coho and chum salmon) was used to estimate the exposure of a simulated steelhead population to fisheries along the migration route. 
 
@@ -42,36 +39,21 @@ A variety of methods and sources provide migration speeds for steelhead, and rat
 
 Fishery opening information for 2004 - 2016 was obtained from the Fishery Operating System (FOS). 
 Visual Basic for Applications (VBA) was used in Microsoft Excel to convert opening information from date and time into cumulative hour, starting from July 15 00:00 as Hour=0, July 15 01:00 as Hour 2, etc. 
-The ending hour, Hour=3335, is equivalent to November 30 at 23:00. 
+The ending hour, Hour 3335, is equivalent to November 30 at 23:00. 
 Opening data was transformed using VBA into a matrix of 0 and 1 where 0 = closed and 1 = open, with rows and columns denoting the hour and km, respectively.  
-One matrix was created for each of the 5 CCFs for each year.  
+One matrix was created for each of the 5 CCFs and 3 CFNFs for each year.  
 
 The movement speed and migration hour past Albion for a simulated population of 1000 steelhead was estimated by drawing from the historical normal distributions estimated above. 
 We then calculated when each fish would have likely been located at each km increment, based on its estimated migration time past Albion and movement speed. 
 This information was used to look up if there was also a fishery open in the same location at the same time, indicating the fish was exposed to an open fishery. 
 We estimated the proportion of the population exposed to each fishery annually. 
-
-<!---Got to here in editing--->
-
-<!---Pulled from Mike's report from November--->
-CCF fisheries for 2016 were conducted by Area E on October 24th and 27th, First Nation Economic Opportunity fisheries with gill nets were conducted intermittently between October 26th and November 5th all together these fisheries were estimated to impact between 10 and 14 days of steelhead migration (depending on assumptions about residence time in the fishing area).  Because of uncertainty in the migration of the IFR steelhead run it is impossible to say exactly what proportion of the run is protected by restricting the fisheries to this limited window.  However, because we have characterized the IFR steelhead run past the Albion fishery, we can use a Monte Carlo procedure to estimate the likely proportion protected, and, our confidence around achieving the 80% protected with a high degree of certainty goal.  In this case, we assume a migration pattern drawn from the historical distribution of run spread and the October 10th estimate of 50% return date (Robert Bison Thompson steelhead update 2 Nov 2016) to generate 10,000 simulated patterns of IFR steelhead migration distribution.  Each hypothesis about residence time is then evaluated in terms of these 10,000 simulated returns and the proportion of the run protected is recorded (Figure 2).  Because we are simulating a large number of possible IFR steelhead return distributions we can estimate a range of the proportion of IFR steelhead protected, but also the distribution of the proportion protected and thus the confidence with which we have protected 80% of the return (Figure 3).
-
-
+In this case, we assume a migration pattern drawn from the historical distribution of run spread and 50% return date estimated above to generate 200 simulated patterns of IFR steelhead migration distribution. 
+Each hypothesis about residence time is then evaluated in terms of these 200 simulated returns and the proportion of the run protected is recorded (Figure 2). 
+Because we are using a Monte Carlo procedure to simulate a large number of possible IFR steelhead return distributions, we can estimate not only a range of the proportion of IFR steelhead protected, but also the distribution of the proportion protected and thus the confidence with which we have protected 80% of the return (Figure 3). 
+Using these results, the cumulative exposure of each fish to fisheries was also estimated. 
 
 ##Results
 
-You can make tables, for example:
+##Discussion
 
-```{r , echo=FALSE}
-knitr::kable(pressure)
-```
-
-
-
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
+##References
