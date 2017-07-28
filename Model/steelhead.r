@@ -40,7 +40,7 @@ km_end<-515
 n_fisheries<-5
 
 }else if(data_source=="FN"){
-  fishery_array<- array(as.numeric(NA), dim = c(625,3336,5,13)) #row, column, fishery, year
+  fishery_array<- array(as.numeric(NA), dim = c(625,3336,4,13)) #row, column, fishery, year
   
   yr=2004
   
@@ -89,14 +89,10 @@ passage_date<-rep(0,n_fish)
 #Population characteristics (these are the hypotheses about the population that will be tested)
 ################################################################################################
 
-#cumulative and daily proportions of the run vulnerable to each fishery
-m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd) 
-s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
-
 #Start the clock
 ptm <- proc.time()
 
-for(i in 1:n_reps){
+for(i in 1:(n_reps)){
 set.seed(i)
   
 yr=2004 #re-initialize year variable
@@ -117,6 +113,10 @@ rt_mean<-sh_runtiming$rt_mean[sh_runtiming$year==yr]-seasonstart_doy #subtract s
 rt_mean_sd<-sh_runtiming$rt_mean_sd[sh_runtiming$year==yr]
 rt_sd<-sh_runtiming$rt_sd[sh_runtiming$year==yr]
 rt_sd_sd<-sh_runtiming$rt_sd_sd[sh_runtiming$year==yr]
+
+#cumulative and daily proportions of the run vulnerable to each fishery
+m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd) 
+s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
 
 #passage_date = the date that the fish passes Albion
 passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i],s_vec[i]))))
@@ -178,7 +178,7 @@ for(f in 1:n_fisheries){
 }
 yr=yr+1
 }
-  progress(i)
+  progress(i,max.value=n_reps,init=1)
   Sys.sleep(0.01)
   if (i==n_reps) cat("Done!\n")
 }
@@ -191,6 +191,27 @@ saveRDS(exposure,file="EO_exposure_1-100.RData")
 ##############################
 #Manipulate exposure data
 ##############################
+
+#Add multiple exposure runs together:
+#This is not very dynamic but it is fine for now...
+
+total_reps<-200
+
+temp_exposure1<-readRDS("EO_exposure_1-100.RData")
+temp_exposure2<-readRDS("EO_exposure_101-200.RData")
+
+exposure<-array(as.numeric(NA),dim=c(n_fish,4,13,total_reps))
+
+#There was a mistake made when re-opening the file, where exposure didn't get reset to 4 fisheries, so it had a 5th fishery
+#still saved. The code below gets rid of that fifth set of data
+
+for(i in 1:100){
+ exposure[,,,i]<-temp_exposure1[,-5,,i]
+}
+
+for(i in 101:200){
+  exposure[,,,i]<-temp_exposure2[,,,i-100]
+}
 
 #Get total exposure time by fishery
 #Not sure this is a useful metric, but it's here in case we decide to use it
@@ -207,8 +228,8 @@ for(y in 1:13){
 
 #-------------Get # of fish exposed by fishery
 
-total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,n_reps))
-for(i in 1:n_reps){
+total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
+for(i in 1:total_reps){
  for(y in 1:13){
   for(f in 1:n_fisheries){
    total_exposed[f,y,i]<-sum(exposure[,f,y,i]>0)
@@ -355,29 +376,29 @@ if(data_source=="Commercial"){
   plot(mean_perc_exposed[1,], main="Area B", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
   axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
   points(mean_perc_exposed[1,])
-  arrows(x, mean_perc_exposed[1,]-sd_perc_exposed[1,], x, mean_perc_exposed[1,]+sd_perc_exposed[1,], length=0.05, angle=90, code=3)
+  arrows(x, mean_perc_exposed[1,]-sd_perc_exposed[1,], x, mean_perc_exposed[1,]+sd_perc_exposed[1,], length=0.05, angle=90, code=3, col="red")
 plot(mean_perc_exposed[2,], main="Area D", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
   axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
   points(mean_perc_exposed[2,])
-  arrows(x, mean_perc_exposed[2,]-sd_perc_exposed[2,], x, mean_perc_exposed[2,]+sd_perc_exposed[2,], length=0.05, angle=90, code=3)
+  arrows(x, mean_perc_exposed[2,]-sd_perc_exposed[2,], x, mean_perc_exposed[2,]+sd_perc_exposed[2,], length=0.05, angle=90, code=3, col="red")
 plot(mean_perc_exposed[3,], main="Area E", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
   axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
   points(mean_perc_exposed[3,])
-  arrows(x, mean_perc_exposed[3,]-sd_perc_exposed[3,], x, mean_perc_exposed[3,]+sd_perc_exposed[3,], length=0.05, angle=90, code=3)
+  arrows(x, mean_perc_exposed[3,]-sd_perc_exposed[3,], x, mean_perc_exposed[3,]+sd_perc_exposed[3,], length=0.05, angle=90, code=3, col="red")
 plot(mean_perc_exposed[4,], main="Area G", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
   axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
   points(mean_perc_exposed[4,])
-  arrows(x, mean_perc_exposed[4,]-sd_perc_exposed[4,], x, mean_perc_exposed[4,]+sd_perc_exposed[4,], length=0.05, angle=90, code=3)
+  arrows(x, mean_perc_exposed[4,]-sd_perc_exposed[4,], x, mean_perc_exposed[4,]+sd_perc_exposed[4,], length=0.05, angle=90, code=3, col="red")
 plot(mean_perc_exposed[5,], main="Area H", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
   axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
   points(mean_perc_exposed[5,])
-  arrows(x, mean_perc_exposed[5,]-sd_perc_exposed[5,], x, mean_perc_exposed[5,]+sd_perc_exposed[5,], length=0.05, angle=90, code=3)
+  arrows(x, mean_perc_exposed[5,]-sd_perc_exposed[5,], x, mean_perc_exposed[5,]+sd_perc_exposed[5,], length=0.05, angle=90, code=3, col="red")
 
 }else if(data_source=="FN"){
   plot(mean_perc_exposed[1,], main="APM BSn", xlab="Year",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[1,])
-    arrows(x, mean_perc_exposed[1,]-sd_perc_exposed[1,], x, mean_perc_exposed[1,]+sd_perc_exposed[1,], length=0.05, angle=90, code=3)
+    arrows(x, mean_perc_exposed[1,]-sd_perc_exposed[1,], x, mean_perc_exposed[1,]+sd_perc_exposed[1,], length=0.05, angle=90, code=3, col="red")
 
     y1<-array(as.numeric(NA),dim=c(1,13))
     for(i in 1:13){
@@ -386,11 +407,11 @@ plot(mean_perc_exposed[5,], main="Area H", xlab="",ylab="", xaxt="n", type="l", 
   plot(mean_perc_exposed[2,], main="APM GN", xlab="Year",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[2,])
-    arrows(x, y1, x, mean_perc_exposed[2,]+sd_perc_exposed[2,], length=0.05, angle=90, code=3)
+    arrows(x, y1, x, mean_perc_exposed[2,]+sd_perc_exposed[2,], length=0.05, angle=90, code=3, col="red")
   plot(mean_perc_exposed[3,], main="BPM DN", xlab="Year",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[3,])
-    arrows(x, mean_perc_exposed[3,]-sd_perc_exposed[3,], x, mean_perc_exposed[3,]+sd_perc_exposed[3,], length=0.05, angle=90, code=3)
+    arrows(x, mean_perc_exposed[3,]-sd_perc_exposed[3,], x, mean_perc_exposed[3,]+sd_perc_exposed[3,], length=0.05, angle=90, code=3, col="red")
   #Turn on if splitting APM DN and SN exposure (remember to rename mains for plot 2 and 3):
     #plot(mean_perc_exposed[4,], main="BPM DN", xlab="Year",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     #axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
