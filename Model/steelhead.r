@@ -314,6 +314,7 @@ if(data_source=="Commercial"){
   
 }
 
+if(data_source=="Commercial"){
 cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries+1,13,total_reps))
 mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
 sd_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
@@ -336,7 +337,30 @@ for(y in 1:13){
     sd_cml_perc_exp[f,y]<-sd_cml_exp[f,y]/1000*100
   }
 }
-
+}else if(data_source=="FN"){
+  cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
+  mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
+  sd_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
+  mean_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
+  sd_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
+  
+  for(f in 0:n_fisheries-1){
+    for(y in 1:13){
+      for(i in 1:total_reps){
+        cml_exp_iters[f+1,y,i]<-sum(cml_exposure[,y,i]==f)
+      }
+    }
+  }
+  
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      mean_cml_exp[f,y]<-mean(cml_exp_iters[f,y,])
+      mean_cml_perc_exp[f,y]<-mean_cml_exp[f,y]/1000*100
+      sd_cml_exp[f,y]<-sd(cml_exp_iters[f,y,])
+      sd_cml_perc_exp[f,y]<-sd_cml_exp[f,y]/1000*100
+    }
+  }
+}
 rm(exposure_temp) #takes up a lot of space, might as well remove
 
 #------------Get iterative exposure to fisheries (Area B then D then H then E/BPM then APM…)
@@ -455,22 +479,66 @@ pdf(file=paste0("Population Cumulative Perc Exposure to ",data_source," Fisherie
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,4.1), oma=c(1,1,1,1))
 
+if(data_source=="Commercial"){
 #Plot of all years together
 barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto Commercial Fisheries by Year",
-          xlab="Year", col=c("darkblue","red","green4","darkgoldenrod1","mediumorchid4","turquoise"),
+          xlab="Year", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","turquoise"),
           ylab="% Exposure",
           legend = c(0,1,2,3,4,5),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),args.legend=list(
             x=18,y=100,bty="n"))
 
 #Plots for each year separately
+
 yr=2004
 for(y in 1:13){
+  
+  y1<-array(as.numeric(NA),dim=c(1,5))
+  for(f in 1:5){
+    y1[f]<-max(0,mean_cml_perc_exp[f,y]-sd_cml_perc_exp[f,y])
+  }
+  
+  y2<-array(as.numeric(NA),dim=c(1,5))
+  for(f in 1:5){
+    y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
+  }
+  
 barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
-        xlab="# of fisheries each fish exposed to", col=c("darkblue","red","green4","darkgoldenrod1","mediumorchid4","turquoise"),
+        xlab="# of fisheries each fish exposed to", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","turquoise"),
         ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3,4,5))
-  arrows(barCenters, mean_cml_perc_exp[,y]-sd_cml_perc_exp[,y], barCenters, mean_cml_perc_exp[,y]+sd_cml_perc_exp[,y], length=0.05, angle=90, code=3)
+  arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
 
   yr=yr+1
-  }
+}
 
+}else if(data_source=="FN"){
+  #Plot of all years together
+  barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto FN Fisheries by Year",
+          xlab="Year", col=c("lightblue","red","green4","darkgoldenrod1"),
+          ylab="% Exposure",
+          legend = c(0,1,2,3),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),args.legend=list(
+            x=18,y=100,bty="n"))
+  
+  #Plots for each year separately
+  
+  yr=2004
+  for(y in 1:13){
+    
+    y1<-array(as.numeric(NA),dim=c(1,4))
+      for(f in 1:4){
+      y1[f]<-max(0,mean_cml_perc_exp[f,y]-sd_cml_perc_exp[f,y])
+      }
+    
+    y2<-array(as.numeric(NA),dim=c(1,4))
+      for(f in 1:4){
+        y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
+      }
+    
+    barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Exposure \nto FN Fisheries in ",yr),
+                        xlab="# of fisheries each fish exposed to", col=c("lightblue","red","green4","darkgoldenrod1"),
+                        ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3))
+    arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
+    
+    yr=yr+1
+  }
+}
 dev.off()
