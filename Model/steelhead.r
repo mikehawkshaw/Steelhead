@@ -425,6 +425,7 @@ barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Expos
     arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
     
     yr=yr+1
+  }
 }
 dev.off()
 
