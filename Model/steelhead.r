@@ -410,13 +410,13 @@ barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Expos
   yr=2004
   for(y in 1:13){
     
-    y1<-array(as.numeric(NA),dim=c(1,5))
-    for(f in 1:5){
+    y1<-array(as.numeric(NA),dim=c(1,3))
+    for(f in 1:3){
       y1[f]<-max(0,mean_perc_exposed[f,y]-sd_perc_exposed[f,y])
     }
     
-    y2<-array(as.numeric(NA),dim=c(1,5))
-    for(f in 1:5){
+    y2<-array(as.numeric(NA),dim=c(1,3))
+    for(f in 1:3){
       y2[f]<-min(100,mean_perc_exposed[f,y]+sd_perc_exposed[f,y])
     }
     
