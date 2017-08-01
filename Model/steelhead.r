@@ -560,24 +560,34 @@ for(y in 1:13){
 setwd(plots_dir)
 
 #Run timing plots
-yr=2004
-y1<-array(as.numeric(NA),dim=c(1,13))
-for(y in 1:13){
+png(file="annual_runtiming.png")
+
+yr=1995
+y1<-array(as.numeric(NA),dim=c(1,22))
+for(y in 1:22){
   y1[y]<-sh_runtiming$rt_mean[sh_runtiming$year==yr]-sh_runtiming$rt_sd[sh_runtiming$year==yr]
   yr=yr+1
 }
 
-yr=2004
-y2<-array(as.numeric(NA),dim=c(1,13))
-for(y in 1:13){
+yr=1995
+y2<-array(as.numeric(NA),dim=c(1,22))
+for(y in 1:22){
   y2[y]<-sh_runtiming$rt_mean[sh_runtiming$year==yr]+sh_runtiming$rt_sd[sh_runtiming$year==yr]
   yr=yr+1
 }
 
-barCenters<-barplot(sh_runtiming$rt_mean[sh_runtiming$year>2003], main="Estimated mean annual run timing at Albion", xlab="Year",ylab="Day of Year", 
-                    names.arg=seq(2004,2016,by=1), axis.lty=1, ylim=range(200,350),xpd=FALSE)
-arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
+#Estimated mean annual run timing at Albion
 
+barCenters<-barplot(sh_runtiming$rt_mean, main="", xlab="Year",ylab="Day of Year", 
+                    names.arg=seq(1995,2016,by=1), axis.lty=1, ylim=range(200,350),xpd=FALSE)
+arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
+dev.off()
+
+png(file="meanvssd_runtiming.png")
+#mean vs sd to show no pattern between 50% date and spread of return
+plot(sh_runtiming$rt_mean,sh_runtiming$rt_sd, xlab="Mean",ylab="Standard deviation")
+
+dev.off()
 
 #Percentage of run exposed by year
 
@@ -665,23 +675,23 @@ pdf(file=paste0("Population Percent Exposure by ",data_source," Fishery - Line p
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1), oma=c(1,1,1,1))
 
 if(data_source=="Commercial"){
-  plot(mean_perc_exposed[1,], main="Area B", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  plot(mean_perc_exposed[1,], main="Area B", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[1,])
     arrows(x, mean_perc_exposed[1,]-sd_perc_exposed[1,], x, mean_perc_exposed[1,]+sd_perc_exposed[1,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[2,], main="Area D", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  plot(mean_perc_exposed[2,], main="Area D", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[2,])
     arrows(x, mean_perc_exposed[2,]-sd_perc_exposed[2,], x, mean_perc_exposed[2,]+sd_perc_exposed[2,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[3,], main="Area E", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  plot(mean_perc_exposed[3,], main="Area E", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[3,])
     arrows(x, mean_perc_exposed[3,]-sd_perc_exposed[3,], x, mean_perc_exposed[3,]+sd_perc_exposed[3,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[4,], main="Area G", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  plot(mean_perc_exposed[4,], main="Area G", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[4,])
     arrows(x, mean_perc_exposed[4,]-sd_perc_exposed[4,], x, mean_perc_exposed[4,]+sd_perc_exposed[4,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[5,], main="Area H", xlab="",ylab="", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  plot(mean_perc_exposed[5,], main="Area H", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[5,])
     arrows(x, mean_perc_exposed[5,]-sd_perc_exposed[5,], x, mean_perc_exposed[5,]+sd_perc_exposed[5,], length=0.05, angle=90, code=3, col="red")
