@@ -92,7 +92,7 @@ passage_date<-rep(0,n_fish)
 #Start the clock
 ptm <- proc.time()
 
-for(i in 1:(n_reps)){
+for(i in 101:(n_reps+100)){
 set.seed(i)
   
 yr=2004 #re-initialize year variable
@@ -119,7 +119,7 @@ m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd)
 s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
 
 #passage_date = the date that the fish passes Albion
-passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i],s_vec[i]))))
+passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i-100],s_vec[i-100]))))
 passage_hour<-passage_date*24 #convert to hours. Hour 0 = midnight July 15
 
 #Speed that the fish travel. Assumptions based on speed of other salmonids.
@@ -147,7 +147,7 @@ for(f in 1:n_fisheries) {
        #If the fish is in the area before the time we care about, then obviously it's not exposed to any fisheries. May want to
        #edit later so that we can run it longer. Will need to make the opening matrices larger.
        if (time_at_loc>0 & time_at_loc<3335){
-         exposure[ind,f,y,i]<-exposure[ind,f,y,i]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
+         exposure[ind,f,y,i-100]<-exposure[ind,f,y,i-100]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
        }
      }
    }
@@ -171,16 +171,16 @@ for(f in 1:n_fisheries){
      #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
      #If the fish is in the area after the time we care about, then obviously it's not exposed to any fisheries.
      if (time_at_loc<3335){
-       exposure[ind,f,y,i]<-exposure[ind,f,y,i]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
+       exposure[ind,f,y,i-100]<-exposure[ind,f,y,i-100]+fishery_array[loc+1,round(time_at_loc)+1,f,y]
       }
      }
    }
 }
 yr=yr+1
 }
-  progress(i,max.value=n_reps,init=1)
+  progress(i,max.value=n_reps+100,init=101)
   Sys.sleep(0.01)
-  if (i==n_reps) cat("Done!\n")
+  if (i==n_reps+100) cat("Done!\n")
 }
 #Stop the clock
 proc.time() - ptm
@@ -195,24 +195,43 @@ saveRDS(exposure,file="EO_exposure_1-100.RData")
 #Add multiple exposure runs together:
 #This is not very dynamic but it is fine for now...
 
-total_reps<-100
+total_reps<-200
 
-temp_exposure1<-readRDS("EO_exposure_1-100.RData")
-temp_exposure2<-readRDS("EO_exposure_101-200.RData")
+if(data_source=="Commercial"){
+  
+temp_exposure1<-readRDS("Com_exposure_1-100.RData")
+temp_exposure2<-readRDS("Com_exposure_101-200.RData")
 
-exposure<-array(as.numeric(NA),dim=c(n_fish,4,13,total_reps))
+exposure<-array(as.numeric(NA),dim=c(n_fish,5,13,total_reps))
 
 #There was a mistake made when re-opening the file, where exposure didn't get reset to 4 fisheries, so it had a 5th fishery
 #still saved. The code below gets rid of that fifth set of data
 
 for(i in 1:100){
- exposure[,,,i]<-temp_exposure1[,-5,,i]
+ exposure[,,,i]<-temp_exposure1[,,,i]
 }
 
 for(i in 101:200){
   exposure[,,,i]<-temp_exposure2[,,,i-100]
 }
 
+}else if(data_source=="FN"){
+  temp_exposure1<-readRDS("EO_exposure_1-100.RData")
+  temp_exposure2<-readRDS("EO_exposure_101-200.RData")
+  
+  exposure<-array(as.numeric(NA),dim=c(n_fish,4,13,total_reps))
+  
+  #There was a mistake made when re-opening the file, where exposure didn't get reset to 4 fisheries, so it had a 5th fishery
+  #still saved. The code below gets rid of that fifth set of data
+  
+  for(i in 1:100){
+    exposure[,,,i]<-temp_exposure1[,-5,,i]
+  }
+  
+  for(i in 101:200){
+    exposure[,,,i]<-temp_exposure2[,,,i-100]
+  }
+}
 #Get total exposure time by fishery
 #Not sure this is a useful metric, but it's here in case we decide to use it
 yr=2004
@@ -363,8 +382,163 @@ for(y in 1:13){
 }
 rm(exposure_temp) #takes up a lot of space, might as well remove
 
-#------------Get iterative exposure to fisheries (Area B then D then H then E/BPM then APM…)
+#------------Get iterative exposure to fisheries
 
+if(data_source=="Commercial"){
+
+#Order of commercial fisheries: G B D H E  (needs refining)
+
+iter_exp<-array(0,dim=c(n_fisheries,13,total_reps))
+mean_iter_exp<-array(0,dim=c(n_fisheries,13))
+mean_iter_perc_exp<-array(0,dim=c(n_fisheries,13))
+sd_iter_exp<-array(0,dim=c(n_fisheries,13))
+sd_iter_perc_exp<-array(0,dim=c(n_fisheries,13))
+
+####NOTE NEW ORDER OF FISHERIES!!! 1=G, 2=B, 3=D, 4=H, 5=E
+
+#How many fish exposed to Area G fishery?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    iter_exp[1,y,i]<-sum(exposure[,4,y,i]>0)
+  }
+}
+
+#How many fish exposed to Area B fishery that were not also exposed to Area G?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if(sum(exposure[n,1,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+        iter_exp[2,y,i]<-iter_exp[2,y,i]+1
+      }else{
+        iter_exp[2,y,i]<-iter_exp[2,y,i]
+      }
+    }
+    #Add new fish to old total
+    #iter_exp[2,y,i]<-iter_exp[2,y,i]+iter_exp[1,y,i]  remove for now, don't want the cumulative iterative exposure
+  }
+}
+
+#How many fish exposed to Area D fishery that were not also exposed to Area G and B?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+          if((sum(exposure[n,2,y,i]>0)>sum(exposure[n,1,y,i]>0)) && (sum(exposure[n,2,y,i]>0)>sum(exposure[n,4,y,i]>0))){
+              iter_exp[3,y,i]<-iter_exp[3,y,i]+1
+          }else{
+            iter_exp[3,y,i]<-iter_exp[3,y,i]
+          }
+    }
+    #Add new fish to old total
+    #iter_exp[3,y,i]<-iter_exp[3,y,i]+iter_exp[2,y,i]
+  }
+}
+
+
+#How many fish exposed to Area H fishery that were not also exposed to Area G, B, and D?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+        if(sum(exposure[n,5,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure[n,5,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure[n,5,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+          iter_exp[4,y,i]<-iter_exp[4,y,i]+1
+        }else{
+          iter_exp[4,y,i]<-iter_exp[4,y,i]
+        }
+    }
+    #Add new fish to old total
+    #iter_exp[4,y,i]<-iter_exp[4,y,i]+iter_exp[3,y,i]
+  }
+}
+
+#How many fish exposed to Area E fishery that were not also exposed to Area G, B, D, and H?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if(sum(exposure[n,3,y,i]>0)>sum(exposure[n,5,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+        iter_exp[5,y,i]<-iter_exp[5,y,i]+1
+      }else{
+        iter_exp[5,y,i]<-iter_exp[5,y,i]
+      }
+    }
+    #Add new fish to old total
+    #iter_exp[5,y,i]<-iter_exp[5,y,i]+iter_exp[4,y,i]
+  }
+}
+
+for(y in 1:13){
+  for(f in 1:n_fisheries){
+    mean_iter_exp[f,y]<-mean(iter_exp[f,y,])
+    mean_iter_perc_exp[f,y]<-mean_iter_exp[f,y]/1000*100
+    sd_iter_exp[f,y]<-sd(iter_exp[f,y,])
+    sd_iter_perc_exp[f,y]<-sd_iter_exp[f,y]/1000*100
+  }
+}
+
+}else if(data_source=="FN"){
+  #Order of FN fisheries: BPM DN, APM GN, APM BSn  (needs refining)
+  
+  exposure_temp<-array(as.numeric(NA),dim=c(n_fish,n_fisheries-1,13,total_reps))
+  
+  exposure_temp[,1,,]<-exposure[,1,,]
+  exposure_temp[,2,,]<-exposure[,2,,]+exposure[,3,,]
+  exposure_temp[,3,,]<-exposure[,4,,]
+  
+  iter_exp<-array(0,dim=c(n_fisheries-1,13,total_reps))
+  mean_iter_exp<-array(0,dim=c(n_fisheries-1,13))
+  mean_iter_perc_exp<-array(0,dim=c(n_fisheries-1,13))
+  sd_iter_exp<-array(0,dim=c(n_fisheries-1,13))
+  sd_iter_perc_exp<-array(0,dim=c(n_fisheries-1,13))
+  
+  ####NOTE NEW ORDER OF FISHERIES!!! 1=BPM DN, 2=APM GN, 3=APM BSn
+  
+  #How many fish exposed to BPM DN fishery?
+  for(i in 1:total_reps){
+    for(y in 1:13){
+      iter_exp[1,y,i]<-sum(exposure_temp[,3,y,i]>0)
+    }
+  }
+  
+  #How many fish exposed to APM GN fishery that were not also exposed to BPM DN?
+  for(i in 1:total_reps){
+    for(y in 1:13){
+      for(n in 1:n_fish){
+        if(sum(exposure_temp[n,2,y,i]>0)>sum(exposure_temp[n,3,y,i]>0)){
+          iter_exp[2,y,i]<-iter_exp[2,y,i]+1
+        }else{
+          iter_exp[2,y,i]<-iter_exp[2,y,i]
+        }
+      }
+      #Add new fish to old total
+      #iter_exp[2,y,i]<-iter_exp[2,y,i]+iter_exp[1,y,i]
+    }
+  }
+  
+  #How many fish exposed to APM BSn fishery that were not also exposed to BPM DN and APM GN?
+  for(i in 1:total_reps){
+    for(y in 1:13){
+      for(n in 1:n_fish){
+        if((sum(exposure_temp[n,1,y,i]>0)>sum(exposure_temp[n,2,y,i]>0)) && (sum(exposure_temp[n,1,y,i]>0)>sum(exposure_temp[n,3,y,i]>0))){
+          iter_exp[3,y,i]<-iter_exp[3,y,i]+1
+        }else{
+          iter_exp[3,y,i]<-iter_exp[3,y,i]
+        }
+      }
+      #Add new fish to old total
+      #iter_exp[3,y,i]<-iter_exp[3,y,i]+iter_exp[2,y,i]
+    }
+  }
+
+  for(y in 1:13){
+    for(f in 1:n_fisheries-1){
+      mean_iter_exp[f,y]<-mean(iter_exp[f,y,])
+      mean_iter_perc_exp[f,y]<-mean_iter_exp[f,y]/1000*100
+      sd_iter_exp[f,y]<-sd(iter_exp[f,y,])
+      sd_iter_perc_exp[f,y]<-sd_iter_exp[f,y]/1000*100
+    }
+  }
+  
+}else{ #data_source=="REC"
+  
+}
 
 ##############################
 #Print plots to pdf file
@@ -520,7 +694,7 @@ par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,4.1), oma=c(1,1,1,1))
 if(data_source=="Commercial"){
 #Plot of all years together
 barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto Commercial Fisheries by Year",
-          xlab="Year", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","turquoise"),
+          xlab="Year", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey"),
           ylab="% Exposure",
           legend = c(0,1,2,3,4,5),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),args.legend=list(
             x=18,y=100,bty="n"))
@@ -541,7 +715,7 @@ for(y in 1:13){
   }
   
 barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
-        xlab="# of fisheries each fish exposed to", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","turquoise"),
+        xlab="# of fisheries each fish exposed to", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey"),
         ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3,4,5))
   arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
 
@@ -578,5 +752,69 @@ barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Expos
     
     yr=yr+1
   }
+}
+dev.off()
+
+#-------------Plots of iterative exposure------------------------
+
+pdf(file=paste0("Population Iterative Exposure by ",data_source," Fishery - Line plots w Error bars.pdf"))
+#par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
+par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1), oma=c(1,1,1,1))
+
+if(data_source=="Commercial"){
+  
+  y1<-array(as.numeric(NA),dim=c(5,13))
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      y1[f,y]<-max(0,mean_iter_perc_exp[f,y]-sd_iter_perc_exp[f,y])
+    }
+  }
+  
+  y2<-array(as.numeric(NA),dim=c(5,13))
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      y2[f,y]<-min(100,mean_iter_perc_exp[f,y]+sd_iter_perc_exp[f,y])
+    }
+  }
+  
+  yr=2004
+  x<-1:5
+  
+  for(y in 1:13){ 
+    plot(mean_iter_perc_exp[,y], main=paste0("Iterative Exposure to \nCommercial Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+    axis(1, at=1:5,labels=c("Area G","Area B","Area D", "Area H", "Area E"), las=1)
+    points(mean_iter_perc_exp[,y])
+    arrows(x, y1[,y], x, y2[,y], length=0.05, angle=90, code=3, col="red")
+    yr=yr+1
+  }
+  
+}else if(data_source=="FN"){
+  
+  y1<-array(as.numeric(NA),dim=c(3,13))
+  for(y in 1:13){
+    for(f in 1:n_fisheries-1){
+      y1[f,y]<-max(0,mean_iter_perc_exp[f,y]-sd_iter_perc_exp[f,y])
+    }
+  }
+  
+  y2<-array(as.numeric(NA),dim=c(3,13))
+  for(y in 1:13){
+    for(f in 1:n_fisheries-1){
+      y2[f,y]<-min(100,mean_iter_perc_exp[f,y]+sd_iter_perc_exp[f,y])
+    }
+  }
+
+  yr=2004
+  x<-1:3
+ for(y in 1:13){ 
+  plot(mean_iter_perc_exp[,y], main=paste0("Iterative Exposure to FN Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+    axis(1, at=1:3,labels=c("BPM DN","APM GN","APM BSn"), las=1)
+    points(mean_iter_perc_exp[,y])
+    arrows(x, y1[,y], x, y2[,y], length=0.05, angle=90, code=3, col="red")
+    yr=yr+1
+ }
+    
+}else{ #data_source=="REC"
+  
 }
 dev.off()
