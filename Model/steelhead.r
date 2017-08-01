@@ -559,6 +559,26 @@ for(y in 1:13){
 
 setwd(plots_dir)
 
+#Run timing plots
+yr=2004
+y1<-array(as.numeric(NA),dim=c(1,13))
+for(y in 1:13){
+  y1[y]<-sh_runtiming$rt_mean[sh_runtiming$year==yr]-sh_runtiming$rt_sd[sh_runtiming$year==yr]
+  yr=yr+1
+}
+
+yr=2004
+y2<-array(as.numeric(NA),dim=c(1,13))
+for(y in 1:13){
+  y2[y]<-sh_runtiming$rt_mean[sh_runtiming$year==yr]+sh_runtiming$rt_sd[sh_runtiming$year==yr]
+  yr=yr+1
+}
+
+barCenters<-barplot(sh_runtiming$rt_mean[sh_runtiming$year>2003], main="Estimated mean annual run timing at Albion", xlab="Year",ylab="Day of Year", 
+                    names.arg=seq(2004,2016,by=1), axis.lty=1, ylim=range(200,350),xpd=FALSE)
+arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
+
+
 #Percentage of run exposed by year
 
 if(data_source=="Commercial"){
