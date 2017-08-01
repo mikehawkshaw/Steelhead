@@ -195,7 +195,20 @@ saveRDS(exposure,file="EO_exposure_1-100.RData")
 #Add multiple exposure runs together:
 #This is not very dynamic but it is fine for now...
 
+####NOTE: The code below the line only needs to be run if you re-run the model. The combined iterations are saved, 
+####      and can be extracted with:
+
 total_reps<-200
+
+if(data_source=="Commercial"){
+  exposure<-array(as.numeric(NA),dim=c(n_fish,5,13,total_reps))
+  exposure<-readRDS("Com_exposure_1-200.RData")
+}else if(data_source=="FN"){
+  exposure<-array(as.numeric(NA),dim=c(n_fish,4,13,total_reps))
+  exposure<-readRDS("EO_exposure_1-200.RData")
+}
+
+#__________________________________________
 
 if(data_source=="Commercial"){
   
@@ -349,7 +362,7 @@ for(f in 0:n_fisheries){
 }
 
 for(y in 1:13){
-   for(f in 1:n_fisheries+1){
+   for(f in 1:(n_fisheries+1)){
     mean_cml_exp[f,y]<-mean(cml_exp_iters[f,y,])
     mean_cml_perc_exp[f,y]<-mean_cml_exp[f,y]/1000*100
     sd_cml_exp[f,y]<-sd(cml_exp_iters[f,y,])
@@ -363,7 +376,7 @@ for(y in 1:13){
   mean_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
   sd_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
   
-  for(f in 0:n_fisheries-1){
+  for(f in 0:(n_fisheries-1)){
     for(y in 1:13){
       for(i in 1:total_reps){
         cml_exp_iters[f+1,y,i]<-sum(cml_exposure[,y,i]==f)
@@ -704,13 +717,13 @@ barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto Commercial Fis
 yr=2004
 for(y in 1:13){
   
-  y1<-array(as.numeric(NA),dim=c(1,5))
-  for(f in 1:5){
+  y1<-array(as.numeric(NA),dim=c(1,6))
+  for(f in 1:6){
     y1[f]<-max(0,mean_cml_perc_exp[f,y]-sd_cml_perc_exp[f,y])
   }
   
-  y2<-array(as.numeric(NA),dim=c(1,5))
-  for(f in 1:5){
+  y2<-array(as.numeric(NA),dim=c(1,6))
+  for(f in 1:6){
     y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
   }
   
