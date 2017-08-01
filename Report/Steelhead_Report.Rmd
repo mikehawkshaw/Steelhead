@@ -1,7 +1,7 @@
 ---
 title: "Steelhead Exposure Analysis"
-author: "Mike Hawkshaw, Brittany Jenewein"
-date: "6/22/2017"
+author: "Brittany Jenewein, Mike Hawkshaw"
+date: "01/Aug/2017"
 output: 
   word_document:
     fig_caption: true
@@ -9,51 +9,146 @@ output:
 ## Introduction
 
 An objective of the Southern BC Salmon Integrated Fisheries Management Plan is to minimize the impact of Canadian fisheries on Interior Fraser River (IFR) steelhead to increase spawner abundance. 
-For Fraser river commercial gill net fisheries, the strategy is to protect 80% of the IFR steelhead run with a high degree of certainty (IFMP 2017). 
-Steelhead are not targeted by Canadian fisheries but are bycatch in some salmon-targeted fisheries, including Area B seine, Area D gillnet, Area E gillnet, Area G gillnet, and Area H troll (collectively referred to hereafter as Canadian commercial fisheries (CCF)). Steelhead may also be bycatch in First Nation salmon-targeted fisheries, particularly in Economic Opportunity (EO) fisheries targeting late-run Fraser sockeye, Fraser pink and Southern Chum. These were divided into Below Port Mann drift net (BPM DN), Above Port Mann gillnet (APM GN), and Above Port Mann beach seine (APM BSn), and are collectively referred to hereafter as Canadian First Nation fisheries (CFNF). 
+For Fraser river commercial gill net fisheries, the strategy is to protect 80% of the IFR steelhead run with a high degree of certainty (DFO 2017).  
+
+Steelhead are not targeted by Canadian commercial fisheries but are bycatch in some salmon-targeted fisheries, including Area B seine, Area D gillnet, Area E gillnet, Area G gillnet, and Area H troll (collectively referred to hereafter as Canadian commercial fisheries (CCF)). Steelhead may also be bycatch in First Nation salmon-targeted fisheries, particularly in Economic Opportunity (EO) fisheries targeting late-run Fraser sockeye, Fraser pink and Southern Chum. These were divided into Below Port Mann drift net (BPM DN), Above Port Mann gillnet (APM GN), and Above Port Mann beach seine (APM BSn), and are collectively referred to hereafter as Canadian First Nation fisheries (CFNF).  
+
 The main management tool used to protect IFR steelhead from CCF in the Fraser River is to allow only a small window for chum fisheries such that 80% of the steelhead run can migrate through the fishing areas without being intercepted in CCF. 
-We explored extending this goal of protecting 80% of the steelhead run to other commercial/EO fisheries along the steelhead migration route. The current analysis examines CCF and CFNF but could potentially be expanded to other fisheries as desired.
+We explored extending this goal of protecting 80% of the steelhead run to other commercial/EO fisheries along the steelhead migration route. The current analysis examines CCF and CFNF but could potentially be expanded to other fisheries as desired.  
+
 **Our analysis of historic return patterns and fishery plans suggests that recent fishing plans do not meet this goal for all fisheries.** 
 
 ## Methods 
 
-**1. Characterize the Steelhead run in terms of return timing to Albion test fishery**  
+**1. Characterize the steelhead run in terms of return timing to Albion test fishery**  
 
 It is standard practice to use a normal distribution to represent the pattern of migrating salmon past a fixed point. 
-To characterize IFR steelhead migration, a normal distribution was fit using a Bayesian hierarchical approach to 22 years (1994-2016) of steelhead catch at the Albion test fishery to estimate the 50% date and distribution of the migration timing each year (Figure 1). 
+To characterize IFR steelhead migration, a normal distribution was fit using a Bayesian hierarchical approach to 22 years (1995-2016) of steelhead catch at the Albion test fishery to estimate the 50% date and distribution of the migration timing each year. 
 The historic information from the Albion test fishery allows us to characterize the variability of the run timing of steelhead from year to year, and the Bayesian approach reduces uncertainty in the timing estimates when data is limited.  
-
-<!----These graphs need to be recreated---->
-![The distribution of calculated 50% dates (a) and the distribution of the widths of the reconstructed returns (b) to Albion are shown as both histograms (bars) and normal approximations of the distribution (red line). The 50% dates plotted against the spread of the runs (c) demonstrating no relationship between 50% date and spread of the return.  Data provided for 1995 to 2016.\label{figurelabel}](/DFO-MPO/github/Steelhead/Outputs/testing.png)  
 
 **2. Characterize the fishing area and migration speed**  
 
-The current iteration of this model examines fisheries along the northern route and Fraser River, excluding the west coast of Vancouver Island. This includes commercial fishing Areas B, D, E, G, H, and First Nation fisheries from Area 29 to Sawmill Creek.
-An approximate migration path through the fishing area was measured and binned into 1 km increments using the measuring tool in Google Earth (ref). 
-For example, Area 12-12 (Bate Passage) begins at km 33 and ends at km 38. 
-The starting point of migration through the CCF fisheries (km = 0) is the NW corner of Area 11-1 (51°09'48.90" N, 128°04'8.10"W); the migration route examined extends ~625 km, ending at Sawmill Creek (49°36'42.87"N, 121°24'35.86"W).
-The reference point for IFR steelhead migration is the Albion test fishery 60.4 km upstream from the mouth of the Fraser River. 
-A variety of methods and sources provide migration speeds for steelhead, and rather than an exhaustive review of different estimates migration speeds, a hypothesis about swimming speed (20 km/day, assumed for coho and chum salmon) was used to estimate the exposure of a simulated steelhead population to fisheries along the migration route. 
+The current iteration of this model examines fisheries along the northern route and Fraser River, excluding the west coast of Vancouver Island. This includes commercial fishing Areas B, D, E, G, H, and First Nation EO fisheries from Area 29 to Sawmill Creek.
+An approximate migration path through the fishing area was measured and binned into 1 km increments using the measuring tool in Google Earth Pro (Google Inc. 2017). 
+For example, Area 12-12 (Bate Passage) begins at km 33 and ends at km 38.  
+
+The starting point of migration through the CCF fisheries (km = 0) is the NW corner of Area 11-1 (51°09'48.90" N, 128°04'8.10"W); the migration route examined extends ~625 km, ending at Sawmill Creek (49°36'42.87"N, 121°24'35.86"W). 
+The reference point for IFR steelhead migration is the Albion test fishery 60.4 km upstream from the mouth of the Fraser River.  
+
+A variety of methods and sources provide migration speeds for steelhead, and rather than an exhaustive review of different estimates migration speeds, a hypothesis about swimming speed (20 km/day, assumed for coho and chum salmon) was used to estimate the exposure of a simulated steelhead population to fisheries along the migration route.  
 
 **3. Estimate the proportion of overlap between migration timing distribution for IFR steelhead and commercial fisheries**  
 
 Fishery opening information for 2004 - 2016 was obtained from the Fishery Operating System (FOS). 
 Visual Basic for Applications (VBA) was used in Microsoft Excel to convert opening information from date and time into cumulative hour, starting from July 15 00:00 as Hour=0, July 15 01:00 as Hour 2, etc. 
 The ending hour, Hour 3335, is equivalent to November 30 at 23:00. 
-Opening data was transformed using VBA into a matrix of 0 and 1 where 0 = closed and 1 = open, with rows and columns denoting the hour and km, respectively.  
+Opening data was transformed using VBA into a matrix of 0 and 1 where 0 = closed and 1 = open, with rows and columns denoting the hour and km, respectively. 
 One matrix was created for each of the 5 CCFs and 3 CFNFs for each year.  
 
-The movement speed and migration hour past Albion for a simulated population of 1000 steelhead was estimated by drawing from the historical normal distributions estimated above. 
+The movement speed and migration hour past Albion for a simulated population of 1000 steelhead was estimated by drawing from the historical normal distributions estimated in section 1. 
 We then calculated when each fish would have likely been located at each km increment, based on its estimated migration time past Albion and movement speed. 
-This information was used to look up if there was also a fishery open in the same location at the same time, indicating the fish was exposed to an open fishery. 
+This information was used to look up if there was also a fishery open in the same location at the same time, which would indicate the fish was exposed to an open fishery. 
+
 We estimated the proportion of the population exposed to each fishery annually. 
-In this case, we assume a migration pattern drawn from the historical distribution of run spread and 50% return date estimated above to generate 200 simulated patterns of IFR steelhead migration distribution. 
-Each hypothesis about residence time is then evaluated in terms of these 200 simulated returns and the proportion of the run protected is recorded (Figure 2). 
-Because we are using a Monte Carlo procedure to simulate a large number of possible IFR steelhead return distributions, we can estimate not only a range of the proportion of IFR steelhead protected, but also the distribution of the proportion protected and thus the confidence with which we have protected 80% of the return (Figure 3). 
-Using these results, the cumulative exposure of each fish to fisheries was also estimated. 
+In this case, we assume a migration pattern drawn from the historical distribution of run spread and 50% return date estimated annually to generate 200 simulated patterns of IFR steelhead migration distribution. 
+Each hypothesis about residence time is then evaluated in terms of these 200 simulated returns and the proportion of the run exposed is recorded.  
+
+Because we are using a Monte Carlo procedure to simulate a large number of possible IFR steelhead return distributions, we can estimate not only a range of the proportion of IFR steelhead protected, but also the distribution of the proportion protected and thus the confidence with which we have exposed less than 20% of the return. 
+
+Using these results, the cumulative exposure of each fish to fisheries was also estimated by counting whether each fish encountered a particular fishery group (i.e. Area G, B, etc.) and determining the proportion of the population that was exposed to no fisheries, 1 fishery, 2 fisheries, etc.  
+
+We also calculated iterative exposure to fisheries by assuming an approximate progression of encounters to each fishery. 
+For CCFs, we assumed fish would first encounter Area G fisheries, followed by Area B, Area D, Area H, and finally Area E. 
+For CFNFs, we assumed fish would first encounter BPM GN fisheries, followed by APM GN, and finally APM BSn. 
+This analysis could be improved by altering the current model to track timing of fishery encounters.  
+
 
 ##Results
 
+**1. Characterize the steelhead run in terms of return timing to Albion test fishery**
+
+Estimates of 50% dates to Albion ranged from day 256 (September 13; September 12 leap years) to day 303 (October 30; October 29 leap years). 
+Most years had high variability in this estimate owing to a lack of encounters observed in the Albion test fishery (Figure 1). 
+There was no relationship between 50% date and spread of the return (Figure 2).
+
+![Figure 1. The mean (+/- SD) of calculated 50% dates to Albion are shown as histograms. Data provided for 1995 to 2016.\label{figurelabel}](/DFO-MPO/github/Steelhead/Outputs/annual_runtiming.png)  
+
+![Figure 2. The 50% dates plotted against the spread of the runs demonstrating no relationship between 50% date and spread of the return. Data provided for 1995 to 2016.\label{figurelabel}](/DFO-MPO/github/Steelhead/Outputs/meanvssd_runtiming.png)
+
+
+**2. Estimate the proportion of overlap between migration timing distribution for IFR steelhead and commercial fisheries**  
+
+**See PDF file "3_Population Percent Exposure by Commercial Fishery - Line plots w Error bars.pdf" for the following graphs.**   
+
+Overall, Area H fisheries appear to expose the greatest proportion of the steelhead population to fishing activity, where over 50% of the population is exposed in 10 of 13 years (Figure 3a). 
+Area B and D fisheries expose the next highest proportions of the population to fishing activity, though exposure is highly variable year to year and depends quite heavily on the population's run timing (Figures 3b & 3c). 
+Exposure to Area E fisheries was low compared to the other fisheries; In 11 of 13 years it was very likely that less than 20% of the population was exposed during their migration, even considering potential variation in run timing (Figure 3d). 
+Steelhead did not encounter Area G fisheries in 10 of 13 years, and in the remaining years it was very likely that less than 20% of the population was exposed to these fisheries (Figure 3e).  
+
+A bar graph comparing the population % exposure in each CCF fishery by year is available in the PDF file "4_Population Percent Exposure to Commercial Fisheries by Year - Barplots.pdf".  
+
+**See PDF file "5_Population Percent Exposure by FN Fishery - Line plots w Error bars.pdf" for the following graphs.**  
+
+APM BSn fisheries had the highest average % exposure of the steelhead population overall, followed by APM GN fisheries and lastly the BPM DN fisheries (Figure 5a, 5b, 5c, respectively). 
+However, the % exposure in any given year greatly depended on the run timing, so it is difficult to conclude whether APM BSn fisheries expose more of the population than APM GN. 
+BPM DN fisheries were most likely to consistently expose less than 20% of the population to fishing activity, regardless of run timing.   
+
+A bar graph comparing the population % exposure in each CFNF fishery by year is available in the PDF file "6_Population Percent Exposure to FN Fisheries by Year - Barplots.pdf".  
+
+The very early run timing estimated in 2008 led to low estimates of exposure in almost all fisheries except the APM BSn and APM GN fisheries, which may have exposed up to approximately 35% of the population to fishing activity that year.  
+
+**See PDF file "7_Population Cumulative Perc Exposure to Commercial Fisheries - Bar Plots.pdf" for the following graphs.**  
+
+In every year, it was fairly uncommon for a fish to be exposed to more than 3 CCFs. 
+In fact, in 10 of 13 years, at least 60% of the population was exposed to 2 or fewer CCFs. 
+This does not change much with run timing variability, except in 2015 and 2016.  
+
+**See PDF file "8_Population Cumulative Perc Exposure to FN Fisheries - Bar Plots.pdf" for the following graphs.**  
+
+It was very unlikely for the steelhead population to be exposed to more than 2 CFNFs. 
+In 12 of 13 years, greater than 60% of the population on average was either exposed to 1 fishery or completely bypassed all 3. 
+However, in many years this changes greatly with run timing variability.  
+
+**See PDF file "9_Population Iterative Exposure by Commercial Fishery - Line plots w Error bars.pdf" for the following graphs.**  
+
+The graphs of iterative exposure show how much more of the population is exposed due to each fishery following the previous fisheries. 
+For example, in the first figure for 2004 the Area G fishery exposes 0% of the population to fishing activity. 
+Moving right along the x-axis, the next fishery encountered by the population is Area B. 
+In this year, Area B fisheries expose around 63% of the population to fishing activity. 
+Moving right again, the Area D fishery exposes an additional 18% of the population to fishing activity, which was not exposed to either Area G or Area B fisheries.  
+
+For every year, it seems that the greatest likelihood of exposure to fishing activity occurs during Area B fisheries, and that if a fish manages to bypass that activity it is fairly unlikely to encounter a fishery in other areas. 
+This is a broad generalization, however, and it does vary from year to year. 
+In addition, Area B and Area D fisheries occur in very similar areas and during very similar times, so it is understandable that there would not be as many fish exposed to Area D fisheries that were not also exposed to Area B fisheries. 
+Other than 2005, it appears that Area E fisheries do not expose portions of the population that were not already exposed to other fishing activities.  
+
+**See PDF file "10_Population Iterative Exposure by FN Fishery - Line plots w Error bars.pdf" for the following graphs.**  
+
+As noted previously, BPM DN fisheries are consistently likely to expose less than 20% of the population to fishing activity. 
+APM GN fisheries expose a higher proportion of the population to fishing activity than BPM DN on average, and it seems the majority of these fish were not previously exposed to BPM DN fisheries. 
+However, this does vary greatly with run timing. 
+The proportion of the population exposed to APM BSn fisheries that were not exposed to either BPM DN or APM GN fisheries varies greatly from year to year and with run timing, though on average the exposure ranges from approximately 10 - 40%.  
+
 ##Discussion
 
+The reconstructions of simulated steelhead population exposure to actual fisheries that occurred each year suggest that some fisheries (Area H, Area B, Area D) have a much lower likelihood of meeting the goal of exposing less than 20% of the population to fishing activity than others (Area G, Area E). 
+The model we have developed can also be used to forecast potential impacts of fishing plans using the average run timing distribution based on 22 years of historical data. 
+This is not without limitations, however; Some of the concerns in this approach include:  
+
+1. We don't know the actual run size of the IFR steelhead population year to year;
+2. This model does not give a sense of the actual impacts to the population - for this we would need catch and effort data to estimate catchability by gear type.  
+
+**Both of the above point strongly to the need for fisher-independent information about steelhead encounters.**    
+
+Other steps that could be taken to further improve this model:  
+
+1. Run the model with more scenarios (currently estimate for 200 due to lack of computing power);
+2. Calculate actual probabilities of exposing <20% of the population to each fishery;
+3. Improve estimates of steelhead migration speed;
+4. Expand model to include more fisheries (e.g. Recreational) and more areas (e.g. Southern Route Areas 17-23)
+
 ##References
+
+DFO. 2017. Pacific Region Integrated Fisheries Management Plan. Salmon, Southern BC.
+
+Google Inc.2017. Google Earth (Version 7.1.7.2606) [Software]. Available from https://www.google.com/earth/download/gep/agree.html
