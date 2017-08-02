@@ -11,11 +11,11 @@ output:
 An objective of the Southern BC Salmon Integrated Fisheries Management Plan is to minimize the impact of Canadian fisheries on Interior Fraser River (IFR) steelhead to increase spawner abundance. 
 For Fraser river commercial gill net fisheries, the strategy is to protect 80% of the IFR steelhead run with a high degree of certainty (DFO 2017).  
 
-Steelhead are not targeted by Canadian commercial fisheries but are bycatch in some salmon-targeted fisheries, including Area B seine, Area D gillnet, Area E gillnet, Area G gillnet, and Area H troll (collectively referred to hereafter as Canadian commercial fisheries (CCF)). Steelhead may also be bycatch in First Nation salmon-targeted fisheries, particularly in Economic Opportunity (EO) fisheries targeting late-run Fraser sockeye, Fraser pink and Southern Chum. These were divided into Below Port Mann drift net (BPM DN), Above Port Mann gillnet (APM GN), and Above Port Mann beach seine (APM BSn), and are collectively referred to hereafter as Canadian First Nation fisheries (CFNF).  
+Steelhead are not targeted by Canadian commercial fisheries but are bycatch in some salmon-targeted fisheries, including Area B seine, Area D gillnet, Area E gillnet, Area G gillnet, and Area H troll (collectively referred to hereafter as Canadian commercial fisheries (CCFs)). Steelhead may also be bycatch in First Nation salmon-targeted fisheries, particularly in Economic Opportunity (EO) fisheries targeting late-run Fraser sockeye, Fraser pink and Southern Chum. These were divided into Below Port Mann drift net (BPM DN), Above Port Mann gillnet (APM GN), and Above Port Mann beach seine (APM BSn), and are collectively referred to hereafter as Canadian First Nation fisheries (CFNFs).  
 
 The main management tool used to protect IFR steelhead from CCFs in the Fraser River is to allow only a small window for chum fisheries such that 80% of the steelhead run can migrate through the fishing areas without being intercepted in CCF. 
 The purpose of this work was to explore the likelihood of a steelhead population being intercepted by other commercial/EO fisheries along the steelhead migration route, in addition to in-river CCFs. 
-The current analysis examines CCF and CFNF but could potentially be expanded to other fisheries as desired.  
+The current analysis examines CCFs and CFNFs but could potentially be expanded to other fisheries as desired.  
 
 **Our analysis of historic return patterns and fishery plans suggests that recent fishing plans do not meet this goal for all fisheries.** 
 
@@ -145,13 +145,13 @@ This is not without limitations, however; Some of the concerns in this approach 
 Other steps that could be taken to further improve this model:  
 
 1. Run the model with more scenarios (currently estimate for 200 due to lack of computing power);
-2. Calculate actual probabilities of exposing <20% of the population to each fishery;
+2. Calculate actual probabilities of exposing the population to each fishery;
 3. Improve estimates of steelhead migration speed;
-4. Expand model to include more fisheries (e.g. Recreational) and more areas (e.g. Southern Route Areas 17-23)
-5. Explore using harvest rates of target species to estimate potential impacts to the steelhead population
+4. Expand model to include more fisheries (e.g. Recreational) and more areas (e.g. Southern Route Areas 17-23);
+5. Explore using harvest rates of target species to estimate potential impacts to the steelhead population (only possible for a few fisheries).
 
 ##References
 
 DFO. 2017. Pacific Region Integrated Fisheries Management Plan. Salmon, Southern BC.
 
-Google Inc.2017. Google Earth (Version 7.1.7.2606) [Software]. Available from https://www.google.com/earth/download/gep/agree.html
+Google Inc. 2017. Google Earth (Version 7.1.7.2606) [Software]. Available from https://www.google.com/earth/download/gep/agree.html
