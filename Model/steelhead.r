@@ -578,9 +578,11 @@ for(y in 1:22){
 
 #Estimated mean annual run timing at Albion
 
-barCenters<-barplot(sh_runtiming$rt_mean, main="", xlab="Year",ylab="Day of Year", 
-                    names.arg=seq(1995,2016,by=1), axis.lty=1, ylim=range(200,350),xpd=FALSE)
-arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
+x<-1:22
+plot(sh_runtiming$rt_mean, main="", xlab="Year",ylab="Day of Year", xaxt="n", type="l", bty="n", lty=1, ylim=range(200,350))
+  axis(1, at=1:22,labels=c("1995","","1997","","1999","","2001","","2003","","2005","","2007","","2009","","2011","","2013","","2015",""), las=2)
+  points(sh_runtiming$rt_mean)
+arrows(x, y1, x, y2, length=0.05, angle=90, code=3, col="red")
 dev.off()
 
 png(file="meanvssd_runtiming.png")
