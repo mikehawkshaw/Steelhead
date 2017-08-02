@@ -1,7 +1,7 @@
 ---
 title: "Steelhead Exposure Analysis"
 author: "Brittany Jenewein, Mike Hawkshaw"
-date: "01/Aug/2017"
+date: "02/Aug/2017"
 output: 
   word_document:
     fig_caption: true
@@ -13,8 +13,9 @@ For Fraser river commercial gill net fisheries, the strategy is to protect 80% o
 
 Steelhead are not targeted by Canadian commercial fisheries but are bycatch in some salmon-targeted fisheries, including Area B seine, Area D gillnet, Area E gillnet, Area G gillnet, and Area H troll (collectively referred to hereafter as Canadian commercial fisheries (CCF)). Steelhead may also be bycatch in First Nation salmon-targeted fisheries, particularly in Economic Opportunity (EO) fisheries targeting late-run Fraser sockeye, Fraser pink and Southern Chum. These were divided into Below Port Mann drift net (BPM DN), Above Port Mann gillnet (APM GN), and Above Port Mann beach seine (APM BSn), and are collectively referred to hereafter as Canadian First Nation fisheries (CFNF).  
 
-The main management tool used to protect IFR steelhead from CCF in the Fraser River is to allow only a small window for chum fisheries such that 80% of the steelhead run can migrate through the fishing areas without being intercepted in CCF. 
-We explored extending this goal of protecting 80% of the steelhead run to other commercial/EO fisheries along the steelhead migration route. The current analysis examines CCF and CFNF but could potentially be expanded to other fisheries as desired.  
+The main management tool used to protect IFR steelhead from CCFs in the Fraser River is to allow only a small window for chum fisheries such that 80% of the steelhead run can migrate through the fishing areas without being intercepted in CCF. 
+The purpose of this work was to explore the likelihood of a steelhead population being intercepted by other commercial/EO fisheries along the steelhead migration route, in addition to in-river CCFs. 
+The current analysis examines CCF and CFNF but could potentially be expanded to other fisheries as desired.  
 
 **Our analysis of historic return patterns and fishery plans suggests that recent fishing plans do not meet this goal for all fisheries.** 
 
@@ -51,17 +52,16 @@ This information was used to look up if there was also a fishery open in the sam
 
 We estimated the proportion of the population exposed to each fishery annually. 
 In this case, we assume a migration pattern drawn from the historical distribution of run spread and 50% return date estimated annually to generate 200 simulated patterns of IFR steelhead migration distribution. 
-Each hypothesis about residence time is then evaluated in terms of these 200 simulated returns and the proportion of the run exposed is recorded.  
-
-Because we are using a Monte Carlo procedure to simulate a large number of possible IFR steelhead return distributions, we can estimate not only a range of the proportion of IFR steelhead protected, but also the distribution of the proportion protected and thus the confidence with which we have exposed less than 20% of the return. 
+Each hypothesis about residence time is then evaluated in terms of these 200 simulated returns and the proportion of the run exposed is recorded. 
+Because we are using a Monte Carlo procedure to simulate a large number of possible IFR steelhead return distributions, we can estimate not only a range of the proportion of IFR steelhead exposed, but also the distribution of the proportion exposed.  
 
 Using these results, the cumulative exposure of each fish to fisheries was also estimated by counting whether each fish encountered a particular fishery group (i.e. Area G, B, etc.) and determining the proportion of the population that was exposed to no fisheries, 1 fishery, 2 fisheries, etc.  
 
-We also calculated iterative exposure to fisheries by assuming an approximate progression of encounters to each fishery. 
+We also calculated iterative exposure to fisheries to determine what proportion of the population was exposed to each fishery that had not already encountered another fishery along its migration route. 
+To do this, we assumed an approximate order that steelhead were likely to encounter each fishery. 
 For CCFs, we assumed fish would first encounter Area G fisheries, followed by Area B, Area D, Area H, and finally Area E. 
 For CFNFs, we assumed fish would first encounter BPM GN fisheries, followed by APM GN, and finally APM BSn. 
 This analysis could be improved by altering the current model to track timing of fishery encounters.  
-
 
 ##Results
 
@@ -111,11 +111,13 @@ However, in many years this changes greatly with run timing variability.
 
 **See PDF file "9_Population Iterative Exposure by Commercial Fishery - Line plots w Error bars.pdf" for the following graphs.**  
 
-The graphs of iterative exposure show how much more of the population is exposed due to each fishery following the previous fisheries. 
-For example, in the first figure for 2004 the Area G fishery exposes 0% of the population to fishing activity. 
-Moving right along the x-axis, the next fishery encountered by the population is Area B. 
-In this year, Area B fisheries expose around 63% of the population to fishing activity. 
-Moving right again, the Area D fishery exposes an additional 18% of the population to fishing activity, which was not exposed to either Area G or Area B fisheries.  
+The graphs of iterative exposure show what proportion of the population was exposed to each fishery that had not already encountered another fishery along its migration route. 
+For example, in the first figure for 2004 the Area G fishery did not expose the population to fishing activity. 
+Moving right along the x-axis, the next fishery encountered by the population was Area B. 
+In this year, Area B fisheries exposed around 63% of the population to fishing activity, which were not exposed to Area G fisheries. 
+Moving right again, the Area D fishery exposed an additional 18% of the population to fishing activity, which was not exposed to either Area G or Area B fisheries. 
+Next, Area H fisheries exposed an additional 15% of the population to fishing activity, which was not exposed to Area G, Area B, or Area G fisheries. 
+Finally, by the time the population encounters Area E fisheries, only around 2% of the population is exposed to Area E fishing activity and those 2% were not exposed to Area G, Area B, Area G, or Area H fisheries.  
 
 For every year, it seems that the greatest likelihood of exposure to fishing activity occurs during Area B fisheries, and that if a fish manages to bypass that activity it is fairly unlikely to encounter a fishery in other areas. 
 This is a broad generalization, however, and it does vary from year to year. 
@@ -131,7 +133,7 @@ The proportion of the population exposed to APM BSn fisheries that were not expo
 
 ##Discussion
 
-The reconstructions of simulated steelhead population exposure to actual fisheries that occurred each year suggest that some fisheries (Area H, Area B, Area D) have a much lower likelihood of meeting the goal of exposing less than 20% of the population to fishing activity than others (Area G, Area E). 
+The reconstructions of simulated steelhead population exposure to actual fisheries that occurred each year suggest that some fisheries (Area H, Area B, Area D) are much more likely to expose a large proportion of the population to fishing activity than others (Area G, Area E). 
 The model we have developed can also be used to forecast potential impacts of fishing plans using the average run timing distribution based on 22 years of historical data. 
 This is not without limitations, however; Some of the concerns in this approach include:  
 
@@ -146,6 +148,7 @@ Other steps that could be taken to further improve this model:
 2. Calculate actual probabilities of exposing <20% of the population to each fishery;
 3. Improve estimates of steelhead migration speed;
 4. Expand model to include more fisheries (e.g. Recreational) and more areas (e.g. Southern Route Areas 17-23)
+5. Explore using harvest rates of target species to estimate potential impacts to the steelhead population
 
 ##References
 
