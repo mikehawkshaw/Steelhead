@@ -28,7 +28,7 @@ s[i]=sqrt(sum((albion_annual[,1] - m[i])^ 2*p,na.rm=T))
 xs = albion_annual[,1]
 pth = dnorm(albion_annual[,1],m[i],s[i])
 
-deviates[,i]<-p-pth
+#deviates[,i]<-p-pth
 
 #plot fitted normal distribution to observations
 #it's important to check these - because of the nature of the truncated data set there appears to be a bias towards a later run timing prediction.
@@ -65,6 +65,17 @@ par(mfcol=c(1,1))
 
 plot(years,m[2:n_col], xlab="Year", ylab="50% date", main="No Time Trend in Date of 50% return")
 
+x<-1:22
+y1<-m[2:n_col]-s[2:n_col]
+y2<-m[2:n_col]+s[2:n_col]
+
+par(mar=c(6,5,1,1))
+
+plot(m[2:n_col], main="", xlab="Year", ylab="Day of Year", xaxt="n",yaxt="n", type="l", bty="n", lty=1, ylim=range(240,340),cex.axis=1.5, cex.lab=1.5, mgp=c(4,1,0))
+   axis(1, at=1:22,labels=c("1995","","1997","","1999","","2001","","2003","","2005","","2007","","2009","","2011","","2013","","2015",""), las=2, cex.axis=1.5)
+   axis(2, at=c(240,250,260,270,280,290,300,310,320,330,340), labels=c("240","","260","","280","","300","","320","","340"), las=2, cex.axis=1.5)
+   arrows(x, y1, x, y2, length=0.05, angle=90, code=3, col="red", lwd=2)
+   points(m[2:n_col],cex=2, pch=16)
 
 
 #calculate mean p50 and SD from run timing data 
