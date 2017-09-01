@@ -474,7 +474,7 @@ for(y in 1:13){
 }
 rm(exposure_temp) #takes up a lot of space, might as well remove
 
-#------------Get iterative exposure to fisheries
+#------------Get incremental exposure to fisheries
 
 if(data_source=="Commercial"){
 
@@ -506,7 +506,7 @@ for(i in 1:total_reps){
       }
     }
     #Add new fish to old total
-    #iter_exp[2,y,i]<-iter_exp[2,y,i]+iter_exp[1,y,i]  remove for now, don't want the cumulative iterative exposure
+    #iter_exp[2,y,i]<-iter_exp[2,y,i]+iter_exp[1,y,i]  remove for now, don't want the cumulative incremental exposure
   }
 }
 
@@ -898,9 +898,9 @@ barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Expos
 }
 dev.off()
 
-#-------------Plots of iterative exposure------------------------
+#-------------Plots of incremental exposure------------------------
 
-pdf(file=paste0("Population Iterative Exposure by ",data_source," Fishery - Line plots w Error bars.pdf"))
+pdf(file=paste0("Population Incremental Exposure by ",data_source," Fishery - Line plots w Error bars.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1), oma=c(1,1,1,1))
 
@@ -924,7 +924,7 @@ if(data_source=="Commercial"){
   x<-1:5
   
   for(y in 1:13){ 
-    plot(mean_iter_perc_exp[,y], main=paste0("Iterative Exposure to \nCommercial Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+    plot(mean_iter_perc_exp[,y], main=paste0("Incremental Exposure to \nCommercial Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:5,labels=c("Area G","Area B","Area D", "Area H", "Area E"), las=1)
     points(mean_iter_perc_exp[,y])
     arrows(x, y1[,y], x, y2[,y], length=0.05, angle=90, code=3, col="red")
@@ -950,7 +950,7 @@ if(data_source=="Commercial"){
   yr=2004
   x<-1:3
  for(y in 1:13){ 
-  plot(mean_iter_perc_exp[,y], main=paste0("Iterative Exposure to FN Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  plot(mean_iter_perc_exp[,y], main=paste0("Incremental Exposure to FN Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:3,labels=c("BPM DN","APM GN","APM BSn"), las=1)
     points(mean_iter_perc_exp[,y])
     arrows(x, y1[,y], x, y2[,y], length=0.05, angle=90, code=3, col="red")
