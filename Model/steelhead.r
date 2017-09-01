@@ -632,6 +632,146 @@ for(y in 1:13){
   
 }
 
+
+
+#-----------Incremental exposure of all 8 fisheries together--------------------------------------------------
+
+
+#Order of commercial fisheries when data imported: B D E G H
+
+incr_exp<-array(0,dim=c(n_fisheries,13,total_reps))
+mean_incr_exp<-array(0,dim=c(n_fisheries,13))
+mean_incr_perc_exp<-array(0,dim=c(n_fisheries,13))
+sd_incr_exp<-array(0,dim=c(n_fisheries,13))
+sd_incr_perc_exp<-array(0,dim=c(n_fisheries,13))
+
+####NOTE NEW ORDER OF FISHERIES!!! 1=G, 2=B, 3=D, 4=H, 5=E
+
+#How many fish exposed to Area G fishery?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    incr_exp[1,y,i]<-sum(exposure[,4,y,i]>0)
+  }
+}
+
+#How many fish exposed to Area B fishery that were not also exposed to Area G?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if(sum(exposure[n,1,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+        incr_exp[2,y,i]<-incr_exp[2,y,i]+1
+      }else{
+        incr_exp[2,y,i]<-incr_exp[2,y,i]
+      }
+    }
+    #Add new fish to old total
+    #incr_exp[2,y,i]<-incr_exp[2,y,i]+incr_exp[1,y,i]  remove for now, don't want the cumulative incremental exposure
+  }
+}
+
+#How many fish exposed to Area D fishery that were not also exposed to Area G and B?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if((sum(exposure[n,2,y,i]>0)>sum(exposure[n,1,y,i]>0)) && (sum(exposure[n,2,y,i]>0)>sum(exposure[n,4,y,i]>0))){
+        incr_exp[3,y,i]<-incr_exp[3,y,i]+1
+      }else{
+        incr_exp[3,y,i]<-incr_exp[3,y,i]
+      }
+    }
+    #Add new fish to old total
+    #incr_exp[3,y,i]<-incr_exp[3,y,i]+incr_exp[2,y,i]
+  }
+}
+
+
+#How many fish exposed to Area H fishery that were not also exposed to Area G, B, and D?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if(sum(exposure[n,5,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure[n,5,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure[n,5,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+        incr_exp[4,y,i]<-incr_exp[4,y,i]+1
+      }else{
+        incr_exp[4,y,i]<-incr_exp[4,y,i]
+      }
+    }
+    #Add new fish to old total
+    #incr_exp[4,y,i]<-incr_exp[4,y,i]+incr_exp[3,y,i]
+  }
+}
+
+#How many fish exposed to Area E fishery that were not also exposed to Area G, B, D, and H?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if(sum(exposure[n,3,y,i]>0)>sum(exposure[n,5,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+        incr_exp[5,y,i]<-incr_exp[5,y,i]+1
+      }else{
+        incr_exp[5,y,i]<-incr_exp[5,y,i]
+      }
+    }
+    #Add new fish to old total
+    #incr_exp[5,y,i]<-incr_exp[5,y,i]+incr_exp[4,y,i]
+  }
+}
+
+####NOTE NEW ORDER OF FISHERIES!!! 6=BPM GN, 7=APM GN, 8=APM BSn
+
+#How many fish exposed to BPM GN fishery that were not also exposed to 5 commercial fisheries?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if(sum(exposure_temp[n,8,y,i]>0)>sum(exposure[n,3,y,i]>0) && sum(exposure_temp[n,8,y,i]>0)>sum(exposure[n,5,y,i]>0) && sum(exposure_temp[n,8,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure_temp[n,8,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure_temp[n,8,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+        incr_exp[6,y,i]<-incr_exp[6,y,i]+1
+      }else{
+        incr_exp[6,y,i]<-incr_exp[6,y,i]
+      }
+    }
+    #Add new fish to old total
+    #incr_exp[6,y,i]<-incr_exp[6,y,i]+incr_exp[5,y,i]
+  }
+}
+
+#How many fish exposed to APM GN fishery that were not also exposed to BPM GN and 5 commercial fisheries?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if(sum(exposure_temp[n,7,y,i]>0)>sum(exposure_temp[n,8,y,i]>0) && sum(exposure_temp[n,7,y,i]>0)>sum(exposure[n,3,y,i]>0) && sum(exposure_temp[n,7,y,i]>0)>sum(exposure[n,5,y,i]>0) && sum(exposure_temp[n,7,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure_temp[n,7,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure_temp[n,7,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+        incr_exp[7,y,i]<-incr_exp[7,y,i]+1
+      }else{
+        incr_exp[7,y,i]<-incr_exp[7,y,i]
+      }
+    }
+    #Add new fish to old total
+    #incr_exp[7,y,i]<-incr_exp[7,y,i]+incr_exp[6,y,i]
+  }
+}
+
+#How many fish exposed to APM BSn fishery that were not also exposed to BPM GN, APM GN, and 5 commercial fisheries?
+for(i in 1:total_reps){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      if(sum(exposure_temp[n,6,y,i]>0)>sum(exposure_temp[n,7,y,i]>0) && sum(exposure_temp[n,6,y,i]>0)>sum(exposure_temp[n,8,y,i]>0) && sum(exposure_temp[n,6,y,i]>0)>sum(exposure[n,3,y,i]>0) && sum(exposure_temp[n,6,y,i]>0)>sum(exposure[n,5,y,i]>0) && sum(exposure_temp[n,6,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure_temp[n,6,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure_temp[n,6,y,i]>0)>sum(exposure[n,4,y,i]>0)){
+        incr_exp[8,y,i]<-incr_exp[8,y,i]+1
+      }else{
+        incr_exp[8,y,i]<-incr_exp[8,y,i]
+      }
+    }
+    #Add new fish to old total
+    #incr_exp[8,y,i]<-incr_exp[8,y,i]+incr_exp[7,y,i]
+  }
+}
+
+for(y in 1:13){
+  for(f in 1:n_fisheries){
+    mean_incr_exp[f,y]<-mean(incr_exp[f,y,])
+    mean_incr_perc_exp[f,y]<-mean_incr_exp[f,y]/1000*100
+    sd_incr_exp[f,y]<-sd(incr_exp[f,y,])
+    sd_incr_perc_exp[f,y]<-sd_incr_exp[f,y]/1000*100
+  }
+}
+
+
 ##############################
 #Print plots to pdf file
 ##############################
