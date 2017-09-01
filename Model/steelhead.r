@@ -478,20 +478,20 @@ rm(exposure_temp) #takes up a lot of space, might as well remove
 
 if(data_source=="Commercial"){
 
-#Order of commercial fisheries: G B D H E  (needs refining)
-
-iter_exp<-array(0,dim=c(n_fisheries,13,total_reps))
-mean_iter_exp<-array(0,dim=c(n_fisheries,13))
-mean_iter_perc_exp<-array(0,dim=c(n_fisheries,13))
-sd_iter_exp<-array(0,dim=c(n_fisheries,13))
-sd_iter_perc_exp<-array(0,dim=c(n_fisheries,13))
+#Order of commercial fisheries when data imported: B D E G H
+  
+incr_exp<-array(0,dim=c(n_fisheries,13,total_reps))
+mean_incr_exp<-array(0,dim=c(n_fisheries,13))
+mean_incr_perc_exp<-array(0,dim=c(n_fisheries,13))
+sd_incr_exp<-array(0,dim=c(n_fisheries,13))
+sd_incr_perc_exp<-array(0,dim=c(n_fisheries,13))
 
 ####NOTE NEW ORDER OF FISHERIES!!! 1=G, 2=B, 3=D, 4=H, 5=E
 
 #How many fish exposed to Area G fishery?
 for(i in 1:total_reps){
   for(y in 1:13){
-    iter_exp[1,y,i]<-sum(exposure[,4,y,i]>0)
+    incr_exp[1,y,i]<-sum(exposure[,4,y,i]>0)
   }
 }
 
@@ -500,13 +500,13 @@ for(i in 1:total_reps){
   for(y in 1:13){
     for(n in 1:n_fish){
       if(sum(exposure[n,1,y,i]>0)>sum(exposure[n,4,y,i]>0)){
-        iter_exp[2,y,i]<-iter_exp[2,y,i]+1
+        incr_exp[2,y,i]<-incr_exp[2,y,i]+1
       }else{
-        iter_exp[2,y,i]<-iter_exp[2,y,i]
+        incr_exp[2,y,i]<-incr_exp[2,y,i]
       }
     }
     #Add new fish to old total
-    #iter_exp[2,y,i]<-iter_exp[2,y,i]+iter_exp[1,y,i]  remove for now, don't want the cumulative incremental exposure
+    #incr_exp[2,y,i]<-incr_exp[2,y,i]+incr_exp[1,y,i]  remove for now, don't want the cumulative incremental exposure
   }
 }
 
@@ -515,13 +515,13 @@ for(i in 1:total_reps){
   for(y in 1:13){
     for(n in 1:n_fish){
           if((sum(exposure[n,2,y,i]>0)>sum(exposure[n,1,y,i]>0)) && (sum(exposure[n,2,y,i]>0)>sum(exposure[n,4,y,i]>0))){
-              iter_exp[3,y,i]<-iter_exp[3,y,i]+1
+              incr_exp[3,y,i]<-incr_exp[3,y,i]+1
           }else{
-            iter_exp[3,y,i]<-iter_exp[3,y,i]
+            incr_exp[3,y,i]<-incr_exp[3,y,i]
           }
     }
     #Add new fish to old total
-    #iter_exp[3,y,i]<-iter_exp[3,y,i]+iter_exp[2,y,i]
+    #incr_exp[3,y,i]<-incr_exp[3,y,i]+incr_exp[2,y,i]
   }
 }
 
@@ -531,13 +531,13 @@ for(i in 1:total_reps){
   for(y in 1:13){
     for(n in 1:n_fish){
         if(sum(exposure[n,5,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure[n,5,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure[n,5,y,i]>0)>sum(exposure[n,4,y,i]>0)){
-          iter_exp[4,y,i]<-iter_exp[4,y,i]+1
+          incr_exp[4,y,i]<-incr_exp[4,y,i]+1
         }else{
-          iter_exp[4,y,i]<-iter_exp[4,y,i]
+          incr_exp[4,y,i]<-incr_exp[4,y,i]
         }
     }
     #Add new fish to old total
-    #iter_exp[4,y,i]<-iter_exp[4,y,i]+iter_exp[3,y,i]
+    #incr_exp[4,y,i]<-incr_exp[4,y,i]+incr_exp[3,y,i]
   }
 }
 
@@ -546,22 +546,22 @@ for(i in 1:total_reps){
   for(y in 1:13){
     for(n in 1:n_fish){
       if(sum(exposure[n,3,y,i]>0)>sum(exposure[n,5,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,2,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,1,y,i]>0) && sum(exposure[n,3,y,i]>0)>sum(exposure[n,4,y,i]>0)){
-        iter_exp[5,y,i]<-iter_exp[5,y,i]+1
+        incr_exp[5,y,i]<-incr_exp[5,y,i]+1
       }else{
-        iter_exp[5,y,i]<-iter_exp[5,y,i]
+        incr_exp[5,y,i]<-incr_exp[5,y,i]
       }
     }
     #Add new fish to old total
-    #iter_exp[5,y,i]<-iter_exp[5,y,i]+iter_exp[4,y,i]
+    #incr_exp[5,y,i]<-incr_exp[5,y,i]+incr_exp[4,y,i]
   }
 }
 
 for(y in 1:13){
   for(f in 1:n_fisheries){
-    mean_iter_exp[f,y]<-mean(iter_exp[f,y,])
-    mean_iter_perc_exp[f,y]<-mean_iter_exp[f,y]/1000*100
-    sd_iter_exp[f,y]<-sd(iter_exp[f,y,])
-    sd_iter_perc_exp[f,y]<-sd_iter_exp[f,y]/1000*100
+    mean_incr_exp[f,y]<-mean(incr_exp[f,y,])
+    mean_incr_perc_exp[f,y]<-mean_incr_exp[f,y]/1000*100
+    sd_incr_exp[f,y]<-sd(incr_exp[f,y,])
+    sd_incr_perc_exp[f,y]<-sd_incr_exp[f,y]/1000*100
   }
 }
 
@@ -574,57 +574,57 @@ for(y in 1:13){
   exposure_temp[,2,,]<-exposure[,2,,]+exposure[,3,,]
   exposure_temp[,3,,]<-exposure[,4,,]
   
-  iter_exp<-array(0,dim=c(n_fisheries-1,13,total_reps))
-  mean_iter_exp<-array(0,dim=c(n_fisheries-1,13))
-  mean_iter_perc_exp<-array(0,dim=c(n_fisheries-1,13))
-  sd_iter_exp<-array(0,dim=c(n_fisheries-1,13))
-  sd_iter_perc_exp<-array(0,dim=c(n_fisheries-1,13))
+  incr_exp<-array(0,dim=c(n_fisheries-1,13,total_reps))
+  mean_incr_exp<-array(0,dim=c(n_fisheries-1,13))
+  mean_incr_perc_exp<-array(0,dim=c(n_fisheries-1,13))
+  sd_incr_exp<-array(0,dim=c(n_fisheries-1,13))
+  sd_incr_perc_exp<-array(0,dim=c(n_fisheries-1,13))
   
-  ####NOTE NEW ORDER OF FISHERIES!!! 1=BPM DN, 2=APM GN, 3=APM BSn
+  ####NOTE NEW ORDER OF FISHERIES!!! 1=BPM GN, 2=APM GN, 3=APM BSn
   
-  #How many fish exposed to BPM DN fishery?
+  #How many fish exposed to BPM GN fishery?
   for(i in 1:total_reps){
     for(y in 1:13){
-      iter_exp[1,y,i]<-sum(exposure_temp[,3,y,i]>0)
+      incr_exp[1,y,i]<-sum(exposure_temp[,3,y,i]>0)
     }
   }
   
-  #How many fish exposed to APM GN fishery that were not also exposed to BPM DN?
+  #How many fish exposed to APM GN fishery that were not also exposed to BPM GN?
   for(i in 1:total_reps){
     for(y in 1:13){
       for(n in 1:n_fish){
         if(sum(exposure_temp[n,2,y,i]>0)>sum(exposure_temp[n,3,y,i]>0)){
-          iter_exp[2,y,i]<-iter_exp[2,y,i]+1
+          incr_exp[2,y,i]<-incr_exp[2,y,i]+1
         }else{
-          iter_exp[2,y,i]<-iter_exp[2,y,i]
+          incr_exp[2,y,i]<-incr_exp[2,y,i]
         }
       }
       #Add new fish to old total
-      #iter_exp[2,y,i]<-iter_exp[2,y,i]+iter_exp[1,y,i]
+      #incr_exp[2,y,i]<-incr_exp[2,y,i]+incr_exp[1,y,i]
     }
   }
   
-  #How many fish exposed to APM BSn fishery that were not also exposed to BPM DN and APM GN?
+  #How many fish exposed to APM BSn fishery that were not also exposed to BPM GN and APM GN?
   for(i in 1:total_reps){
     for(y in 1:13){
       for(n in 1:n_fish){
         if((sum(exposure_temp[n,1,y,i]>0)>sum(exposure_temp[n,2,y,i]>0)) && (sum(exposure_temp[n,1,y,i]>0)>sum(exposure_temp[n,3,y,i]>0))){
-          iter_exp[3,y,i]<-iter_exp[3,y,i]+1
+          incr_exp[3,y,i]<-incr_exp[3,y,i]+1
         }else{
-          iter_exp[3,y,i]<-iter_exp[3,y,i]
+          incr_exp[3,y,i]<-incr_exp[3,y,i]
         }
       }
       #Add new fish to old total
-      #iter_exp[3,y,i]<-iter_exp[3,y,i]+iter_exp[2,y,i]
+      #incr_exp[3,y,i]<-incr_exp[3,y,i]+incr_exp[2,y,i]
     }
   }
 
   for(y in 1:13){
     for(f in 1:n_fisheries-1){
-      mean_iter_exp[f,y]<-mean(iter_exp[f,y,])
-      mean_iter_perc_exp[f,y]<-mean_iter_exp[f,y]/1000*100
-      sd_iter_exp[f,y]<-sd(iter_exp[f,y,])
-      sd_iter_perc_exp[f,y]<-sd_iter_exp[f,y]/1000*100
+      mean_incr_exp[f,y]<-mean(incr_exp[f,y,])
+      mean_incr_perc_exp[f,y]<-mean_incr_exp[f,y]/1000*100
+      sd_incr_exp[f,y]<-sd(incr_exp[f,y,])
+      sd_incr_perc_exp[f,y]<-sd_incr_exp[f,y]/1000*100
     }
   }
   
@@ -909,14 +909,14 @@ if(data_source=="Commercial"){
   y1<-array(as.numeric(NA),dim=c(5,13))
   for(y in 1:13){
     for(f in 1:n_fisheries){
-      y1[f,y]<-max(0,mean_iter_perc_exp[f,y]-sd_iter_perc_exp[f,y])
+      y1[f,y]<-max(0,mean_incr_perc_exp[f,y]-sd_incr_perc_exp[f,y])
     }
   }
   
   y2<-array(as.numeric(NA),dim=c(5,13))
   for(y in 1:13){
     for(f in 1:n_fisheries){
-      y2[f,y]<-min(100,mean_iter_perc_exp[f,y]+sd_iter_perc_exp[f,y])
+      y2[f,y]<-min(100,mean_incr_perc_exp[f,y]+sd_incr_perc_exp[f,y])
     }
   }
   
@@ -924,9 +924,9 @@ if(data_source=="Commercial"){
   x<-1:5
   
   for(y in 1:13){ 
-    plot(mean_iter_perc_exp[,y], main=paste0("Incremental Exposure to \nCommercial Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+    plot(mean_incr_perc_exp[,y], main=paste0("Incremental Exposure to \nCommercial Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:5,labels=c("Area G","Area B","Area D", "Area H", "Area E"), las=1)
-    points(mean_iter_perc_exp[,y])
+    points(mean_incr_perc_exp[,y])
     arrows(x, y1[,y], x, y2[,y], length=0.05, angle=90, code=3, col="red")
     yr=yr+1
   }
@@ -936,23 +936,23 @@ if(data_source=="Commercial"){
   y1<-array(as.numeric(NA),dim=c(3,13))
   for(y in 1:13){
     for(f in 1:n_fisheries-1){
-      y1[f,y]<-max(0,mean_iter_perc_exp[f,y]-sd_iter_perc_exp[f,y])
+      y1[f,y]<-max(0,mean_incr_perc_exp[f,y]-sd_incr_perc_exp[f,y])
     }
   }
   
   y2<-array(as.numeric(NA),dim=c(3,13))
   for(y in 1:13){
     for(f in 1:n_fisheries-1){
-      y2[f,y]<-min(100,mean_iter_perc_exp[f,y]+sd_iter_perc_exp[f,y])
+      y2[f,y]<-min(100,mean_incr_perc_exp[f,y]+sd_incr_perc_exp[f,y])
     }
   }
 
   yr=2004
   x<-1:3
  for(y in 1:13){ 
-  plot(mean_iter_perc_exp[,y], main=paste0("Incremental Exposure to FN Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+  plot(mean_incr_perc_exp[,y], main=paste0("Incremental Exposure to FN Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:3,labels=c("BPM DN","APM GN","APM BSn"), las=1)
-    points(mean_iter_perc_exp[,y])
+    points(mean_incr_perc_exp[,y])
     arrows(x, y1[,y], x, y2[,y], length=0.05, angle=90, code=3, col="red")
     yr=yr+1
  }
