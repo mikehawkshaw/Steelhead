@@ -333,6 +333,41 @@ for(y in 1:13){
   }  
 }
 
+#-----Get total and mean exposure for all 8 fisheries together
+
+n_fisheries<-8
+n_reps<-200
+
+total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,n_reps))
+
+for(i in 1:n_reps){
+  for(y in 1:13){
+    total_exposed[1,y,i]<-sum(exposure[,1,y,i]>0)
+    total_exposed[2,y,i]<-sum(exposure[,2,y,i]>0)
+    total_exposed[3,y,i]<-sum(exposure[,3,y,i]>0)
+    total_exposed[4,y,i]<-sum(exposure[,4,y,i]>0)
+    total_exposed[5,y,i]<-sum(exposure[,5,y,i]>0)
+    total_exposed[6,y,i]<-sum(exposure[,6,y,i]>0)
+    total_exposed[7,y,i]<-sum((exposure[,7,y,i]+exposure[,8,y,i])>0)
+    total_exposed[8,y,i]<-sum(exposure[,9,y,i]>0)
+  }
+}
+
+mean_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
+sd_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
+
+mean_perc_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
+sd_perc_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
+
+for(y in 1:13){
+  for(f in 1:n_fisheries){
+    mean_exposed[f,y]<-mean(total_exposed[f,y,])
+    mean_perc_exposed[f,y]<-mean_exposed[f,y]/1000*100
+    sd_exposed[f,y]<-sd(total_exposed[f,y,])
+    sd_perc_exposed[f,y]<-sd_exposed[f,y]/1000*100
+  }
+}  
+
 #------------Get cumulative exposure to fisheries
 
 if(data_source=="Commercial"){
@@ -362,11 +397,35 @@ if(data_source=="Commercial"){
       }
     }
   }
+}else if(data_source=="AllCom"){  #For adding Com and FN together
+  
+  exposure_temp<-array(as.numeric(NA),dim=c(n_fish,n_fisheries,13,n_reps))
+  
+  exposure_temp[,1,,]<-exposure[,1,,]
+  exposure_temp[,2,,]<-exposure[,2,,]
+  exposure_temp[,3,,]<-exposure[,3,,]
+  exposure_temp[,4,,]<-exposure[,4,,]
+  exposure_temp[,5,,]<-exposure[,5,,]
+  exposure_temp[,6,,]<-exposure[,6,,]
+  exposure_temp[,7,,]<-exposure[,7,,]+exposure[,8,,]
+  exposure_temp[,8,,]<-exposure[,9,,]
+  
+  cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,n_reps))
+  
+  for(i in 1:n_reps){
+    for(y in 1:13){
+      for(n in 1:n_fish){
+        cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i]>0)
+      }
+    }
+  }
+  rm(exposure_temp)
+  
 }else{ #data_source=="REC"
   
 }
 
-if(data_source=="Commercial"){
+if(data_source=="Commercial"){ #Or if "AllCom"
 cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries+1,13,total_reps))
 mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
 sd_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
