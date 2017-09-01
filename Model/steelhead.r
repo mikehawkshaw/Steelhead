@@ -208,6 +208,26 @@ if(data_source=="Commercial"){
   exposure<-readRDS("EO_exposure_1-200.RData")
 }
 
+#This section adds the commercial and FN EO together:
+
+total_reps<-200
+
+  exposure_com<-array(as.numeric(NA),dim=c(n_fish,5,13,total_reps))
+  exposure_com<-readRDS("Com_exposure_1-200.RData")
+
+  exposure_FN<-array(as.numeric(NA),dim=c(n_fish,4,13,total_reps))
+  exposure_FN<-readRDS("EO_exposure_1-200.RData")
+
+  exposure<-array(as.numeric(NA),dim=c(n_fish,9,13,total_reps))
+  
+  for(i in 1:5){
+    exposure[,i,,]<-exposure_com[,i,,]
+  }
+  
+  for(i in 6:9){
+    exposure[,i,,]<-exposure_FN[,i-5,,]
+  }
+
 #__________________________________________
 
 if(data_source=="Commercial"){
@@ -576,13 +596,32 @@ for(y in 1:22){
   yr=yr+1
 }
 
+#Plot of mean with sd around mean (not 50% date plus spread of run)
+yr=1995
+y1<-array(as.numeric(NA),dim=c(1,22))
+for(y in 1:22){
+  y1[y]<-sh_runtiming$rt_mean[sh_runtiming$year==yr]-sh_runtiming$rt_mean_sd[sh_runtiming$year==yr]
+  yr=yr+1
+}
+
+yr=1995
+y2<-array(as.numeric(NA),dim=c(1,22))
+for(y in 1:22){
+  y2[y]<-sh_runtiming$rt_mean[sh_runtiming$year==yr]+sh_runtiming$rt_mean_sd[sh_runtiming$year==yr]
+  yr=yr+1
+}
+
+
 #Estimated mean annual run timing at Albion
 
+par(mar=c(6,5,1,1))
 x<-1:22
-plot(sh_runtiming$rt_mean, main="", xlab="Year",ylab="Day of Year", xaxt="n", type="l", bty="n", lty=1, ylim=range(200,350))
-  axis(1, at=1:22,labels=c("1995","","1997","","1999","","2001","","2003","","2005","","2007","","2009","","2011","","2013","","2015",""), las=2)
-  points(sh_runtiming$rt_mean)
-arrows(x, y1, x, y2, length=0.05, angle=90, code=3, col="red")
+plot(sh_runtiming$rt_mean, main="", xlab="Year",ylab="Day of Year", xaxt="n", yaxt="n", type="l", bty="n", lty=1, ylim=range(240,340),cex.axis=1.5, cex.lab=1.5, mgp=c(4,1,0))
+  axis(1, at=1:22,labels=c("1995","","1997","","1999","","2001","","2003","","2005","","2007","","2009","","2011","","2013","","2015",""), las=2, cex.axis=1.5)
+  axis(2, at=c(240,250,260,270,280,290,300,310,320,330,340), labels=c("240","","260","","280","","300","","320","","340"), las=2, cex.axis=1.5)
+  arrows(x, y1, x, y2, length=0.05, angle=90, code=3, col="red", lwd=2)
+  points(sh_runtiming$rt_mean,cex=2, pch=16)
+
 dev.off()
 
 png(file="meanvssd_runtiming.png")
