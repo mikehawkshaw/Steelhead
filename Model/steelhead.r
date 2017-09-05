@@ -715,7 +715,7 @@ for(i in 1:total_reps){
   }
 }
 
-####NOTE NEW ORDER OF FISHERIES!!! 6=BPM GN, 7=APM GN, 8=APM BSn
+####NOTE NEW ORDER OF FISHERIES!!! incr_exp[i,,] where i= 6=BPM GN, 7=APM GN, 8=APM BSn
 
 #How many fish exposed to BPM GN fishery that were not also exposed to 5 commercial fisheries?
 for(i in 1:total_reps){
@@ -1035,6 +1035,42 @@ barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Expos
     
     yr=yr+1
   }
+}else if(data_source=="AllCom"){
+  
+#col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey","lightpink","chartreuse","royalblue","black")  
+#col=c("gray90","gray80","gray70","gray60","gray50","gray40","gray30","gray20","gray10","gray0")
+  
+  #Plot of all years together
+  barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto Commercial Fisheries by Year",
+          xlab="Year", col=c("red","orange","yellow","yellowgreen","green","darkcyan","blue","purple","black"),
+          ylab="% Exposure",
+          legend = c(0,1,2,3,4,5,6,7,8),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),args.legend=list(
+            x=18,y=100,bty="n"))
+  
+  #Plots for each year separately
+  #####Needs to be edited####
+  
+  yr=2004
+  for(y in 1:13){
+    
+    y1<-array(as.numeric(NA),dim=c(1,6))
+    for(f in 1:6){
+      y1[f]<-max(0,mean_cml_perc_exp[f,y]-sd_cml_perc_exp[f,y])
+    }
+    
+    y2<-array(as.numeric(NA),dim=c(1,6))
+    for(f in 1:6){
+      y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
+    }
+    
+    barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
+                        xlab="# of fisheries each fish exposed to", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey"),
+                        ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3,4,5))
+    arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
+    
+    yr=yr+1
+  }
+  
 }
 dev.off()
 
@@ -1042,7 +1078,8 @@ dev.off()
 
 pdf(file=paste0("Population Incremental Exposure by ",data_source," Fishery - Line plots w Error bars.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
-par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1), oma=c(1,1,1,1))
+#Default mar=c(5.1,4.1,4.1,2.1)
+par(mfrow=c(2,1),mar=c(5.1,4.1,1,0.5), oma=c(1,1,1,1))
 
 if(data_source=="Commercial"){
   
@@ -1097,6 +1134,33 @@ if(data_source=="Commercial"){
     yr=yr+1
  }
     
+}else if(data_source=="AllCom"){
+  
+  y1<-array(as.numeric(NA),dim=c(8,13))
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      y1[f,y]<-max(0,mean_incr_perc_exp[f,y]-sd_incr_perc_exp[f,y])
+    }
+  }
+  
+  y2<-array(as.numeric(NA),dim=c(8,13))
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      y2[f,y]<-min(100,mean_incr_perc_exp[f,y]+sd_incr_perc_exp[f,y])
+    }
+  }
+  
+  yr=2004
+  x<-1:8
+  
+  for(y in 1:13){ 
+    plot(mean_incr_perc_exp[,y], main=paste0("Incremental Exposure to Commercial Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+    axis(1, at=1:8, cex.axis=0.8,labels=c("Area G","Area B","Area D", "Area H", "Area E", "BPM GN", "APM GN", "APM BSn"), las=1)
+    arrows(x, y1[,y], x, y2[,y], length=0.05, angle=90, code=3, col="red")
+    points(mean_incr_perc_exp[,y],pch=16)
+    yr=yr+1
+  }
+  
 }else{ #data_source=="REC"
   
 }
