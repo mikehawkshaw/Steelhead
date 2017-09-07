@@ -425,7 +425,7 @@ if(data_source=="Commercial"){
   
 }
 
-if(data_source=="Commercial"){ #Or if "AllCom"
+if(data_source=="Commercial" || data_source=="AllCom"){ #Or if "AllCom"
 cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries+1,13,total_reps))
 mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
 sd_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
@@ -665,7 +665,7 @@ for(i in 1:total_reps){
       }
     }
     #Add new fish to old total
-    #incr_exp[2,y,i]<-incr_exp[2,y,i]+incr_exp[1,y,i]  remove for now, don't want the cumulative incremental exposure
+    incr_exp[2,y,i]<-incr_exp[2,y,i]+incr_exp[1,y,i]  #remove for now, don't want the cumulative incremental exposure
   }
 }
 
@@ -680,7 +680,7 @@ for(i in 1:total_reps){
       }
     }
     #Add new fish to old total
-    #incr_exp[3,y,i]<-incr_exp[3,y,i]+incr_exp[2,y,i]
+    incr_exp[3,y,i]<-incr_exp[3,y,i]+incr_exp[2,y,i]
   }
 }
 
@@ -696,7 +696,7 @@ for(i in 1:total_reps){
       }
     }
     #Add new fish to old total
-    #incr_exp[4,y,i]<-incr_exp[4,y,i]+incr_exp[3,y,i]
+    incr_exp[4,y,i]<-incr_exp[4,y,i]+incr_exp[3,y,i]
   }
 }
 
@@ -711,7 +711,7 @@ for(i in 1:total_reps){
       }
     }
     #Add new fish to old total
-    #incr_exp[5,y,i]<-incr_exp[5,y,i]+incr_exp[4,y,i]
+    incr_exp[5,y,i]<-incr_exp[5,y,i]+incr_exp[4,y,i]
   }
 }
 
@@ -728,7 +728,7 @@ for(i in 1:total_reps){
       }
     }
     #Add new fish to old total
-    #incr_exp[6,y,i]<-incr_exp[6,y,i]+incr_exp[5,y,i]
+    incr_exp[6,y,i]<-incr_exp[6,y,i]+incr_exp[5,y,i]
   }
 }
 
@@ -743,7 +743,7 @@ for(i in 1:total_reps){
       }
     }
     #Add new fish to old total
-    #incr_exp[7,y,i]<-incr_exp[7,y,i]+incr_exp[6,y,i]
+    incr_exp[7,y,i]<-incr_exp[7,y,i]+incr_exp[6,y,i]
   }
 }
 
@@ -758,7 +758,7 @@ for(i in 1:total_reps){
       }
     }
     #Add new fish to old total
-    #incr_exp[8,y,i]<-incr_exp[8,y,i]+incr_exp[7,y,i]
+    incr_exp[8,y,i]<-incr_exp[8,y,i]+incr_exp[7,y,i]
   }
 }
 
@@ -1048,24 +1048,23 @@ barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Expos
             x=18,y=100,bty="n"))
   
   #Plots for each year separately
-  #####Needs to be edited####
-  
+
   yr=2004
   for(y in 1:13){
     
-    y1<-array(as.numeric(NA),dim=c(1,6))
-    for(f in 1:6){
+    y1<-array(as.numeric(NA),dim=c(1,9))
+    for(f in 1:9){
       y1[f]<-max(0,mean_cml_perc_exp[f,y]-sd_cml_perc_exp[f,y])
     }
     
-    y2<-array(as.numeric(NA),dim=c(1,6))
-    for(f in 1:6){
+    y2<-array(as.numeric(NA),dim=c(1,9))
+    for(f in 1:9){
       y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
     }
     
     barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
-                        xlab="# of fisheries each fish exposed to", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey"),
-                        ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3,4,5))
+                        xlab="# of fisheries each fish exposed to", col=c("red","orange","yellow","yellowgreen","green","darkcyan","blue","purple","black"),
+                        ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3,4,5,6,7,8))
     arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
     
     yr=yr+1
@@ -1076,7 +1075,9 @@ dev.off()
 
 #-------------Plots of incremental exposure------------------------
 
-pdf(file=paste0("Population Incremental Exposure by ",data_source," Fishery - Line plots w Error bars.pdf"))
+#---Currently set up to calculate CUMULATIVE incr. exposure in the AllCom section and PDF title
+
+pdf(file=paste0("Population Cumulative Incremental Exposure by ",data_source," Fishery - Line plots w Error bars.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
 #Default mar=c(5.1,4.1,4.1,2.1)
 par(mfrow=c(2,1),mar=c(5.1,4.1,1,0.5), oma=c(1,1,1,1))
@@ -1154,7 +1155,7 @@ if(data_source=="Commercial"){
   x<-1:8
   
   for(y in 1:13){ 
-    plot(mean_incr_perc_exp[,y], main=paste0("Incremental Exposure to Commercial Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+    plot(mean_incr_perc_exp[,y], main=paste0("Cumulative Incremental Exposure to Commercial Fisheries in ",yr), xlab="Fishery",ylab="% Exposed", xaxt="n", type="l", cex.main=0.8, bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:8, cex.axis=0.8,labels=c("Area G","Area B","Area D", "Area H", "Area E", "BPM GN", "APM GN", "APM BSn"), las=1)
     arrows(x, y1[,y], x, y2[,y], length=0.05, angle=90, code=3, col="red")
     points(mean_incr_perc_exp[,y],pch=16)
