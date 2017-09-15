@@ -8,13 +8,13 @@ output:
 ---
 ## Introduction
 
-An objective of the Southern BC Salmon Integrated Fisheries Management Plan is to minimize the impact of Canadian fisheries on Interior Fraser River (IFR) steelhead to increase spawner abundance. 
+In the Southern BC Salmon Integrated Fisheries Management Plan, an objective is to minimize the impact of Canadian fisheries on Interior Fraser River (IFR) steelhead to increase spawner abundance. 
 For Fraser river commercial gill net fisheries, the strategy is to protect 80% of the IFR steelhead run with a high degree of certainty (DFO 2017).  
 
 Steelhead are not targeted by Canadian commercial fisheries but are bycatch in some salmon-targeted fisheries, including Area B seine, Area D gillnet, Area E gillnet, Area G gillnet, and Area H troll (collectively referred to hereafter as Canadian commercial fisheries (CCFs)). Steelhead may also be bycatch in First Nation salmon-targeted fisheries, particularly in Economic Opportunity (EO) fisheries targeting late-run Fraser sockeye, Fraser pink and Southern Chum. These were divided into Below Port Mann drift net (BPM DN), Above Port Mann gillnet (APM GN), and Above Port Mann beach seine (APM BSn), and are collectively referred to hereafter as Canadian First Nation fisheries (CFNFs).  
 
 The main management tool used to protect IFR steelhead from CCFs in the Fraser River is to allow only a small window for chum fisheries such that 80% of the steelhead run can migrate through the fishing areas without being intercepted in CCF. 
-The purpose of this work was to explore the likelihood of a steelhead population being intercepted by other commercial/EO fisheries along the steelhead migration route, in addition to in-river CCFs. 
+The purpose of this work was to explore the likelihood of a steelhead population being exposed to other commercial/EO fisheries along the steelhead migration route, as well as the in-river CCFs. 
 The current analysis examines CCFs and CFNFs but could potentially be expanded to other fisheries as desired.  
 
 **Our analysis of historic return patterns and fishery plans suggests that recent fishing plans do not meet this goal for all fisheries.** 
@@ -71,7 +71,7 @@ Estimates of 50% dates to Albion ranged from day 256 (September 13; September 12
 Most years had high variability in this estimate owing to a lack of encounters observed in the Albion test fishery (Figure 1). 
 There was no relationship between 50% date and spread of the return (Figure 2).
 
-![Figure 1. The mean (+/- SD) of calculated 50% dates to Albion are shown as histograms. Data provided for 1995 to 2016.\label{figurelabel}](/DFO-MPO/github/Steelhead/Outputs/annual_runtiming.png)  
+![Figure 1. The mean (+/- 1 SD) of calculated 50% dates to Albion are shown as histograms. Data provided for 1995 to 2016.\label{figurelabel}](/DFO-MPO/github/Steelhead/Outputs/annual_runtiming.png)  
 
 ![Figure 2. The 50% dates plotted against the spread of the runs demonstrating no relationship between 50% date and spread of the return. Data provided for 1995 to 2016.\label{figurelabel}](/DFO-MPO/github/Steelhead/Outputs/meanvssd_runtiming.png)
 
@@ -148,7 +148,7 @@ Other steps that could be taken to further improve this model:
 2. Calculate actual probabilities of exposing the population to each fishery;
 3. Improve estimates of steelhead migration speed;
 4. Expand model to include more fisheries (e.g. Recreational) and more areas (e.g. Southern Route Areas 17-23);
-5. Explore using harvest rates of target species to estimate potential impacts to the steelhead population (only possible for a few fisheries).
+5. Explore using harvest rates of target species to estimate potential bycatch impacts to the steelhead population (only possible for a few fisheries).
 
 ##References
 
