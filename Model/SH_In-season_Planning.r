@@ -2,7 +2,6 @@
 #Steelhead Predictors of In-River Timing and Exposure model
 #Modified for in-season estimation of exposure given fishing plans
 #Authors: Brittany Jenewein, Mike Hawkshaw
-#Last updated: 12 September 2017
 ###################################################################
 
 library("xtable")
@@ -111,7 +110,7 @@ for(i in seq(1,19,2)){
 #IBM like model
 ###################################
 n_fish<-1000
-n_reps<-1000
+n_reps<-10000
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
