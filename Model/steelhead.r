@@ -123,9 +123,12 @@ passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i],s_vec[i]))))
 passage_hour<-passage_date*24 #convert to hours. Hour 0 = midnight July 15
 
 #Speed that the fish travel. Assumptions based on speed of other salmonids.
-speed_mean<-20 #km/day
-speed_sd<-3
-speeds<-(pmax(9,pmin(55,rnorm(fish,speed_mean,speed_sd))))/24 #km/hr
+speed_SW_mean<-34.8 #km/day based on Peter Van Will's chum tagging study 2000-2002 Area 12/13
+speed_SW_sd<-4.1
+speed_FW_mean<-20 #km/day applied to Fraser chum in river (need to find reference)
+speed_FW_sd<-3
+speeds_SW<-(pmax(9,pmin(55,rnorm(fish,speed_SW_mean,speed_SW_sd))))/24 #km/hr
+speeds_FW<-(pmax(9,pmin(55,rnorm(fish,speed_FW_mean,speed_FW_sd))))/24 #km/hr
 
 #################################################
 #Move fish BACKWARD from Albion through fisheries
@@ -133,7 +136,7 @@ speeds<-(pmax(9,pmin(55,rnorm(fish,speed_mean,speed_sd))))/24 #km/hr
      
 for(loc in 1:494){ #494 is km where Albion located
        
-  time_at_loc<-round(passage_hour-(494-loc)/speeds)
+  time_at_loc<-round(passage_hour-(494-loc)/speeds_SW)
   
   for(f in 1:n_fisheries){    
   #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
@@ -149,9 +152,12 @@ for(loc in 1:494){ #494 is km where Albion located
 #Move fish FORWARD from Albion through fisheries
 #################################################
 
+#20km between Albion and Mission, where tidal influence would "officially" end. Assuming switch from SW to FW speeds
+#happens at Albion rather than Mission, otherwise model gets too complicated. Probably need to explore impacts.
+
 for(loc in 495:km_end){ #From Albion, not including Albion start
        
-  time_at_loc<-round(passage_hour+(loc-494)/speeds)
+  time_at_loc<-round(passage_hour+(loc-494)/speeds_FW)
   
   for(f in 1:n_fisheries){
   #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
