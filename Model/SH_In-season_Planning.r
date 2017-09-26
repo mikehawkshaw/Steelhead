@@ -14,20 +14,20 @@ library("svMisc")
 
 yr="2017"
 
-OP1_S<-as.POSIXlt("2017-10-23 09:00:00")
-OP1_E<-as.POSIXlt("2017-10-23 16:00:00")
+OP1_S<-as.POSIXlt("2017-10-23 07:00:00")
+OP1_E<-as.POSIXlt("2017-10-23 20:00:00")
 
-OP2_S<-as.POSIXlt("2017-10-24 09:00:00")
-OP2_E<-as.POSIXlt("2017-10-24 16:00:00")
+OP2_S<-as.POSIXlt("2017-10-24 08:00:00")
+OP2_E<-as.POSIXlt("2017-10-24 18:00:00")
 
-OP3_S<-as.POSIXlt("2017-10-25 09:00:00")
-OP3_E<-as.POSIXlt("2017-10-25 16:00:00")
+OP3_S<-as.POSIXlt("2017-10-26 07:00:00")
+OP3_E<-as.POSIXlt("2017-10-26 20:00:00")
 
-OP4_S<-as.POSIXlt("2017-10-26 00:01:00")
-OP4_E<-as.POSIXlt("2017-10-26 23:59:00")
+OP4_S<-as.POSIXlt("2017-10-27 08:00:00")
+OP4_E<-as.POSIXlt("2017-10-27 18:00:00")
 
-OP5_S<-as.POSIXlt("2017-10-27 09:00:00")
-OP5_E<-as.POSIXlt("2017-10-27 16:00:00")
+OP5_S<-as.POSIXlt("2017-10-30 16:00:00")
+OP5_E<-as.POSIXlt("2017-10-31 10:00:00")
 
 OP6_S<-as.POSIXlt("2017-09-15 00:00:00")
 OP6_E<-as.POSIXlt("2017-09-15 00:00:00")
@@ -53,7 +53,7 @@ OP10_E<-as.POSIXlt("2017-09-15 00:00:00")
 OP1_Area<-"BPM"
 OP2_Area<-"Area E"
 OP3_Area<-"BPM"
-OP4_Area<-"APM"
+OP4_Area<-"Area E"
 OP5_Area<-"APM"
 OP6_Area<-"closed"
 OP7_Area<-"closed"
@@ -122,24 +122,24 @@ passage_date<-rep(0,n_fish)
 #Population characteristics (these are the hypotheses about the population that will be tested)
 ################################################################################################
 
+#Get day of year for Oct 15 of year of interest (season start)
+seasonstart_doy <- as.numeric(strftime(paste(yr,"-09-15",sep=""), format = "%j"))
+
+#Run timing based on Bayesian estimator (grand mean)
+rt_mean<-282.131681 
+rt_mean_sd<-12.416564
+rt_sd<-16.510714
+rt_sd_sd<-5.970674/2
+
 #Start the clock
 ptm <- proc.time()
 
 for(i in 1:(n_reps)){
   set.seed(i)
   
-    #Get day of year for Oct 15 of year of interest (season start)
-    seasonstart_doy <- as.numeric(strftime(paste(yr,"-09-15",sep=""), format = "%j"))
-    
-    #Run timing based on Bayesian estimator (grand mean)
-    rt_mean<-282.131681 
-    rt_mean_sd<-12.416564
-    rt_sd<-16.510714
-    rt_sd_sd<-5.970674
-    
     #cumulative and daily proportions of the run vulnerable to each fishery
     m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd) 
-    s_vec<-abs(rnorm(n_reps,rt_sd,rt_sd_sd))
+    s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
     
     #passage_date = the date that the fish passes Albion
     #passage_date<-(pmax(0,pmin(46,rnorm(fish,m_vec[i],s_vec[i])-seasonstart_doy))) #subtract season start day to put in correct position in matrix
@@ -198,7 +198,7 @@ for(i in 1:(n_reps)){
 proc.time() - ptm
 
 #Save iterations - change file name as appropriate
-saveRDS(exposure,file=paste0("com_plan_exposure_",Sys.Date(),".RData"))
+saveRDS(exposure,file=paste0("C:/DFO-MPO/github/Steelhead/Data/IS_Planning/com_plan_exposure_03_",Sys.Date(),".RData"))
 
 #-------------Get #/% of fish exposed by fishing plan
 total_exposed<-array(as.numeric(NA),dim=c(1,n_reps))
@@ -210,15 +210,15 @@ for(i in 1:n_reps){
 }
 
 #-------------Probability of protecting 80% of the run:
-
-print("Mean % exposed (over all iterations)")
-print(mean(perc_exposed))
-print("95%")
-print(mean(perc_exposed)+1.96*sd(perc_exposed))
-print("5%")
-print(mean(perc_exposed)-1.96*sd(perc_exposed))
-print("Probabilty of protecting 80% of the run")
 prob_20_perc<-sum(perc_exposed<=20)/n_reps
+
+r_names<-c("Mean % exposed (over all iterations)","5%","95%","Probabilty of protecting 80% of the run")
+table_data<-c(mean(perc_exposed),mean(perc_exposed)-1.96*sd(perc_exposed),mean(perc_exposed)+1.96*sd(perc_exposed),prob_20_perc)
+table<-matrix(c(r_names,table_data),ncol=2,byrow=F)
+rownames(table)<-c("","","","")
+colnames(table)<-c("","")
+as.table(table)
+
 print(prob_20_perc)
 high_degree_of_confidence<-pnorm(0.2, mean(1-perc_exposed/100),sd(1-perc_exposed/100))
 print(high_degree_of_confidence)
