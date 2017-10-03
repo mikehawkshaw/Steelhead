@@ -11,8 +11,10 @@ setwd(data_dir)
 #Read in fishery openings data and format
 ###########################################
 
-fishery_array<- array(as.numeric(NA), dim = c(625,3336,length(file.names),13)) #row, column, fishery, year
-file.count<-0
+km_end<-624
+n_fisheries<-24
+
+fishery_array<- array(as.numeric(NA), dim = c(625,3336,n_fisheries,13)) #row, column, fishery, year
 yr<-2004
 
 for(i in 1:13){
@@ -20,18 +22,12 @@ for(i in 1:13){
 path = paste0("C:/DFO-MPO/github/Steelhead/Data/BySpecies/",yr,"/")
 
 file.names <- dir(path, pattern =".csv")
-file.count<-file.count+length(file.names)
 
-j<-1
-for(k in 1:length(file.names)){
-  fishery_array[,,j,i] <- as.matrix(read.csv(file.names[k],colClasses=c("NULL",rep(NA,3336))))
-  j<-j+1
+for(k in 1:n_fisheries){
+  fishery_array[,,k,i] <- as.matrix(read.csv(file.names[k],colClasses=c("NULL",rep(NA,3336))))
 }
 yr=yr+1
 }
-
-km_end<-624
-n_fisheries<-file.count
 
 colnames(fishery_array)<-NULL
 
