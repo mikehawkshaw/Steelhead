@@ -11,60 +11,27 @@ setwd(data_dir)
 #Read in fishery openings data and format
 ###########################################
 
-data_source<-"Commercial" #Options: "Commercial", "FN", "REC"
+fishery_array<- array(as.numeric(NA), dim = c(625,3336,length(file.names),13)) #row, column, fishery, year
+file.count<-0
+yr<-2004
 
-if(data_source=="Commercial"){
+for(i in 1:13){
   
-fishery_array<- array(as.numeric(NA), dim = c(521,3336,5,13)) #row, column, fishery, year
+path = paste0("C:/DFO-MPO/github/Steelhead/Data/BySpecies/",yr,"/")
 
-yr=2004
+file.names <- dir(path, pattern =".csv")
+file.count<-file.count+length(file.names)
 
-for(i in 1:13){ #Updated to include up to 2016 since now using same run timing every year
-  
-  AreaB<-as.matrix(read.csv(paste(yr,"Area B_openings.csv",sep="")))
-  AreaD<-as.matrix(read.csv(paste(yr,"Area D_openings.csv",sep="")))
-  AreaE<-as.matrix(read.csv(paste(yr,"Area E_openings.csv",sep="")))
-  AreaG<-as.matrix(read.csv(paste(yr,"Area G_openings.csv",sep="")))
-  AreaH<-as.matrix(read.csv(paste(yr,"Area H_openings.csv",sep="")))
-  
-  fishery_array[,,1,i]<-AreaB[,2:3337]
-  fishery_array[,,2,i]<-AreaD[,2:3337]
-  fishery_array[,,3,i]<-AreaE[,2:3337]
-  fishery_array[,,4,i]<-AreaG[,2:3337]
-  fishery_array[,,5,i]<-AreaH[,2:3337]
-
-  yr=yr+1
+j<-1
+for(k in 1:length(file.names)){
+  fishery_array[,,j,i] <- as.matrix(read.csv(file.names[k],colClasses=c("NULL",rep(NA,3336))))
+  j<-j+1
 }
-n_km<-521
-km_end<-515
-n_fisheries<-5
+yr=yr+1
+}
 
-}else if(data_source=="FN"){
-  fishery_array<- array(as.numeric(NA), dim = c(625,3336,4,13)) #row, column, fishery, year
-  
-  yr=2004
-  
-  for(i in 1:13){
-    
-    APMBS<-as.matrix(read.csv(paste(yr,"APM BSEO_openings.csv",sep="")))
-    APMDN<-as.matrix(read.csv(paste(yr,"APM DNEO_openings.csv",sep="")))
-    APMSN<-as.matrix(read.csv(paste(yr,"APM SNEO_openings.csv",sep="")))
-    BPMDN<-as.matrix(read.csv(paste(yr,"BPM DNEO_openings.csv",sep="")))
-    
-    fishery_array[,,1,i]<-APMBS[,2:3337]
-    fishery_array[,,2,i]<-APMDN[,2:3337]
-    fishery_array[,,3,i]<-APMSN[,2:3337]
-    fishery_array[,,4,i]<-BPMDN[,2:3337]
-    
-    yr=yr+1
-  }
-  n_km<-624
-  km_end<-624
-  n_fisheries<-4
-  
-}else{ #data_source=="REC"
-  
-} 
+km_end<-624
+n_fisheries<-file.count
 
 colnames(fishery_array)<-NULL
 
@@ -152,8 +119,8 @@ for(loc in 1:494){ #494 is km where Albion located
 #Move fish FORWARD from Albion through fisheries
 #################################################
 
-#20km between Albion and Mission, where tidal influence would "officially" end. Assuming switch from SW to FW speeds
-#happens at Albion rather than Mission, otherwise model gets too complicated. Probably need to explore impacts.
+#Assuming switch from SW to FW speeds happens at Albion, otherwise model gets too complicated. 
+#Probably need to explore impacts.
 
 for(loc in 495:km_end){ #From Albion, not including Albion start
        
