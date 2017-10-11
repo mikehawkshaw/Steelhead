@@ -22,9 +22,10 @@ for(i in 1:13){
 path = paste0("C:/DFO-MPO/github/Steelhead/Data/BySpecies/",yr,"/")
 
 file.names <- dir(path, pattern =".csv")
+print(file.names)
 
 for(k in 1:n_fisheries){
-  fishery_array[,,k,i] <- as.matrix(read.csv(file.names[k],colClasses=c("NULL",rep(NA,3336))))
+  fishery_array[,,k,i] <- as.matrix(read.csv(paste0(path,file.names[k]),colClasses=c("NULL",rep(NA,3336))))
 }
 yr=yr+1
 }
@@ -40,7 +41,7 @@ n_hours<-3336
 #IBM like model
 ###################################
 n_fish<-1000
-n_reps<-100
+n_reps<-1000 #1000 reps with the full 24 fisheries array takes about 8 hrs
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
@@ -96,12 +97,12 @@ speeds_FW<-(pmax(9,pmin(55,rnorm(fish,speed_FW_mean,speed_FW_sd))))/24 #km/hr
 #################################################
 #Move fish BACKWARD from Albion through fisheries
 #################################################
-     
+
 for(loc in 1:494){ #494 is km where Albion located
        
   time_at_loc<-round(passage_hour-(494-loc)/speeds_SW)
   
-  for(f in 1:n_fisheries){    
+  for(f in 1:n_fisheries){   
   #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
   #If the fish is in the area before the time we care about, then obviously it's not exposed to any fisheries. May want to
   #edit later so that we can run it longer. Will need to make the opening matrices larger.
