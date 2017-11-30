@@ -213,7 +213,7 @@ saveRDS(total_exposed,"ComEO_tot_exposure_1-5000.RData")
 
 #The combined iterations are saved, and can be extracted with:
 
-total_exposed<-array(as.numeric(NA),dim=c(n_fish,24,13,total_reps))
+total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
 
 total_exposed<-readRDS("ComEO_tot_exposure_1-5000.RData")
 
