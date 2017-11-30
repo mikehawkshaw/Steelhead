@@ -22,7 +22,6 @@ for(i in 1:13){
 path = paste0("C:/DFO-MPO/github/Steelhead/Data/BySpecies/",yr,"/")
 
 file.names <- dir(path, pattern =".csv")
-print(file.names)
 
 for(k in 1:n_fisheries){
   fishery_array[,,k,i] <- as.matrix(read.csv(paste0(path,file.names[k]),colClasses=c("NULL",rep(NA,3336))))
@@ -56,7 +55,7 @@ passage_date<-rep(0,n_fish)
 #Start the clock
 ptm <- proc.time()
 
-for(i in 1:(n_reps)){
+for(i in 4001:(n_reps+4000)){
 set.seed(i)
   
 yr=2004 #re-initialize year variable
@@ -83,11 +82,11 @@ m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd)
 s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
 
 #passage_date = the date that the fish passes Albion
-passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i],s_vec[i]))))
+passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i-4000],s_vec[i-4000]))))
 passage_hour<-passage_date*24 #convert to hours. Hour 0 = midnight July 15
 
 #Speed that the fish travel. Assumptions based on speed of other salmonids.
-speed_SW_mean<-34.8 #km/day based on Peter Van Will's chum tagging study 2000-2002 Area 12/13
+speed_SW_mean<-34.8 #km/day based on Pieter Van Will's chum tagging study 2000-2002 Area 12/13
 speed_SW_sd<-4.1
 speed_FW_mean<-20 #km/day applied to Fraser chum in river (need to find reference)
 speed_FW_sd<-3
@@ -106,9 +105,9 @@ for(loc in 1:494){ #494 is km where Albion located
   #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
   #If the fish is in the area before the time we care about, then obviously it's not exposed to any fisheries. May want to
   #edit later so that we can run it longer. Will need to make the opening matrices larger.
-  exposure[,f,y,i]<-ifelse(time_at_loc>0 & time_at_loc<3335,
-                          exposure[,f,y,i]+fishery_array[loc+1,
-                                            ifelse(time_at_loc>0 & time_at_loc<3335,time_at_loc+1,1),f,y],exposure[,f,y,i])
+  exposure[,f,y,i-4000]<-ifelse(time_at_loc>0 & time_at_loc<3335,
+                          exposure[,f,y,i-4000]+fishery_array[loc+1,
+                                            ifelse(time_at_loc>0 & time_at_loc<3335,time_at_loc+1,1),f,y],exposure[,f,y,i-4000])
   }
 }
 
@@ -126,22 +125,22 @@ for(loc in 495:km_end){ #From Albion, not including Albion start
   for(f in 1:n_fisheries){
   #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
   #If the fish is in the area after the time we care about, then obviously it's not exposed to any fisheries.
-  exposure[,f,y,i]<-ifelse(time_at_loc>0 & time_at_loc<3335,
-                          exposure[,f,y,i]+fishery_array[loc+1,
-                                            ifelse(time_at_loc>0 & time_at_loc<3335,time_at_loc+1,1),f,y],exposure[,f,y,i])
+  exposure[,f,y,i-4000]<-ifelse(time_at_loc>0 & time_at_loc<3335,
+                          exposure[,f,y,i-4000]+fishery_array[loc+1,
+                                            ifelse(time_at_loc>0 & time_at_loc<3335,time_at_loc+1,1),f,y],exposure[,f,y,i-4000])
      }
   }
 yr=yr+1
 }
-  progress(i,max.value=n_reps,init=1)
+  progress(i,max.value=n_reps+4000,init=4001)
   Sys.sleep(0.01)
-  if (i==n_reps) cat("Done!\n")
+  if (i==n_reps+4000) cat("Done!\n")
 }
 #Stop the clock
 proc.time() - ptm
 
 #Save iterations - change file name as appropriate
-saveRDS(exposure,file="EO_exposure_1-100.RData")
+saveRDS(exposure,file="ComEO_exposure_4001-5000.RData")
 
 ##############################
 #Manipulate exposure data
@@ -149,100 +148,74 @@ saveRDS(exposure,file="EO_exposure_1-100.RData")
 
 #Add multiple exposure runs together:
 #This is not very dynamic but it is fine for now...
-
-####NOTE: The code below the line only needs to be run if you re-run the model. The combined iterations are saved, 
-####      and can be extracted with:
-
-total_reps<-200
-
-if(data_source=="Commercial"){
-  exposure<-array(as.numeric(NA),dim=c(n_fish,5,13,total_reps))
-  exposure<-readRDS("Com_exposure_1-200.RData")
-}else if(data_source=="FN"){
-  exposure<-array(as.numeric(NA),dim=c(n_fish,4,13,total_reps))
-  exposure<-readRDS("EO_exposure_1-200.RData")
-}
-
-#This section adds the commercial and FN EO together:
-
-total_reps<-200
-
-  exposure_com<-array(as.numeric(NA),dim=c(n_fish,5,13,total_reps))
-  exposure_com<-readRDS("Com_exposure_1-200.RData")
-
-  exposure_FN<-array(as.numeric(NA),dim=c(n_fish,4,13,total_reps))
-  exposure_FN<-readRDS("EO_exposure_1-200.RData")
-
-  exposure<-array(as.numeric(NA),dim=c(n_fish,9,13,total_reps))
-  
-  for(i in 1:5){
-    exposure[,i,,]<-exposure_com[,i,,]
-  }
-  
-  for(i in 6:9){
-    exposure[,i,,]<-exposure_FN[,i-5,,]
-  }
-
-#__________________________________________
-
-if(data_source=="Commercial"){
-  
-temp_exposure1<-readRDS("Com_exposure_1-100.RData")
-temp_exposure2<-readRDS("Com_exposure_101-200.RData")
-
-exposure<-array(as.numeric(NA),dim=c(n_fish,5,13,total_reps))
-
-#There was a mistake made when re-opening the file, where exposure didn't get reset to 4 fisheries, so it had a 5th fishery
-#still saved. The code below gets rid of that fifth set of data
-
-for(i in 1:100){
- exposure[,,,i]<-temp_exposure1[,,,i]
-}
-
-for(i in 101:200){
-  exposure[,,,i]<-temp_exposure2[,,,i-100]
-}
-
-}else if(data_source=="FN"){
-  temp_exposure1<-readRDS("EO_exposure_1-100.RData")
-  temp_exposure2<-readRDS("EO_exposure_101-200.RData")
-  
-  exposure<-array(as.numeric(NA),dim=c(n_fish,4,13,total_reps))
-  
-  #There was a mistake made when re-opening the file, where exposure didn't get reset to 4 fisheries, so it had a 5th fishery
-  #still saved. The code below gets rid of that fifth set of data
-  
-  for(i in 1:100){
-    exposure[,,,i]<-temp_exposure1[,-5,,i]
-  }
-  
-  for(i in 101:200){
-    exposure[,,,i]<-temp_exposure2[,,,i-100]
-  }
-}
-#Get total exposure time by fishery
-#Not sure this is a useful metric, but it's here in case we decide to use it
-yr=2004
-
-total_exposure<-array(as.numeric(NA),dim=c(n_fisheries,13))
-
-for(y in 1:13){
-  for(f in 1:n_fisheries){
-    total_exposure[f,y]<-sum(exposure[,f,y]) #Incorrect num dimensions, old code
-  }
-  yr=yr+1
-}
+####NOTE: The code below only needs to be run if you re-run the model. 
 
 #-------------Get # of fish exposed by fishery
 
+total_reps<-5000
+
+exposure_temp<-readRDS("ComEO_exposure_1-1000.RData")
+
 total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
-for(i in 1:total_reps){
+
+for(i in 1:1000){
  for(y in 1:13){
   for(f in 1:n_fisheries){
-   total_exposed[f,y,i]<-sum(exposure[,f,y,i]>0)
+   total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i]>0)
    }
   }
 }
+
+exposure_temp<-readRDS("ComEO_exposure_1001-2000.RData")
+
+for(i in 1001:2000){
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-1000]>0)
+    }
+  }
+}
+
+exposure_temp<-readRDS("ComEO_exposure_2001-3000.RData")
+
+for(i in 2001:3000){
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-2000]>0)
+    }
+  }
+}
+
+exposure_temp<-readRDS("ComEO_exposure_3001-4000.RData")
+
+for(i in 3001:4000){
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-3000]>0)
+    }
+  }
+}
+
+exposure_temp<-readRDS("ComEO_exposure_4001-5000.RData")
+
+for(i in 4001:5000){
+  for(y in 1:13){
+    for(f in 1:n_fisheries){
+      total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i]>0)
+    }
+  }
+}
+
+rm(exposure_temp) #Takes up a lot of memory, best to remove it when done
+gc()
+
+saveRDS(total_exposed,"ComEO_tot_exposure_1-5000.RData")
+
+#The combined iterations are saved, and can be extracted with:
+
+total_exposed<-array(as.numeric(NA),dim=c(n_fish,24,13,total_reps))
+
+total_exposed<-readRDS("ComEO_tot_exposure_1-5000.RData")
 
 #Convert to average #/% fish exposed by fishery each year
 if(data_source=="Commercial"){
