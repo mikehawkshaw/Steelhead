@@ -14,28 +14,31 @@ library("svMisc")
 
 yr="2017"
 
-OP1_S<-as.POSIXlt("2017-10-23 07:00:00")
-OP1_E<-as.POSIXlt("2017-10-23 20:00:00")
+#Name the file that you want to save the exposure data to (prevents having to re-run model for that plan later)
+filename="C:/DFO-MPO/github/Steelhead/Data/Sensitivity_Analysis/Smaller_Pop_size_"
 
-OP2_S<-as.POSIXlt("2017-10-24 08:00:00")
+OP1_S<-as.POSIXlt("2017-10-23 06:00:00") #MFN and TFN. Locked in.
+OP1_E<-as.POSIXlt("2017-10-23 18:00:00")
+
+OP2_S<-as.POSIXlt("2017-10-24 07:00:00") #Area E. Locked in.
 OP2_E<-as.POSIXlt("2017-10-24 18:00:00")
 
-OP3_S<-as.POSIXlt("2017-10-26 07:00:00")
-OP3_E<-as.POSIXlt("2017-10-26 20:00:00")
+OP3_S<-as.POSIXlt("2017-10-27 07:00:00") #Area E. Locked in.
+OP3_E<-as.POSIXlt("2017-10-27 18:00:00")
 
-OP4_S<-as.POSIXlt("2017-10-27 08:00:00")
-OP4_E<-as.POSIXlt("2017-10-27 18:00:00")
+OP4_S<-as.POSIXlt("2017-10-30 16:00:00") #APM Set Nets. Locked in.
+OP4_E<-as.POSIXlt("2017-10-31 16:00:00")
 
-OP5_S<-as.POSIXlt("2017-10-30 16:00:00")
-OP5_E<-as.POSIXlt("2017-10-31 10:00:00")
+OP5_S<-as.POSIXlt("2017-10-31 08:00:00") #APM Drift Nets. Locked in.
+OP5_E<-as.POSIXlt("2017-10-31 16:00:00")
 
-OP6_S<-as.POSIXlt("2017-09-15 00:00:00")
-OP6_E<-as.POSIXlt("2017-09-15 00:00:00")
+OP6_S<-as.POSIXlt("2017-10-26 08:00:00") #MFN and TFN. Locked in.
+OP6_E<-as.POSIXlt("2017-10-26 21:00:00")
 
-OP7_S<-as.POSIXlt("2017-09-15 00:00:00")
+OP7_S<-as.POSIXlt("2017-09-15 00:00:00") 
 OP7_E<-as.POSIXlt("2017-09-15 00:00:00")
 
-OP8_S<-as.POSIXlt("2017-09-15 00:00:00")
+OP8_S<-as.POSIXlt("2017-09-15 00:00:00") 
 OP8_E<-as.POSIXlt("2017-09-15 00:00:00")
 
 OP9_S<-as.POSIXlt("2017-09-15 00:00:00")
@@ -43,6 +46,7 @@ OP9_E<-as.POSIXlt("2017-09-15 00:00:00")
 
 OP10_S<-as.POSIXlt("2017-09-15 00:00:00")
 OP10_E<-as.POSIXlt("2017-09-15 00:00:00")
+
 
 #Fishing areas
 #Default = "closed"
@@ -52,11 +56,11 @@ OP10_E<-as.POSIXlt("2017-09-15 00:00:00")
 
 OP1_Area<-"BPM"
 OP2_Area<-"Area E"
-OP3_Area<-"BPM"
-OP4_Area<-"Area E"
-OP5_Area<-"APM"
-OP6_Area<-"closed"
-OP7_Area<-"closed"
+OP3_Area<-"Area E"
+OP4_Area<-"APM" #Set nets
+OP5_Area<-"APM" #Drift nets
+OP6_Area<-"BPM"
+OP7_Area<-"BPM"
 OP8_Area<-"closed"
 OP9_Area<-"closed"
 OP10_Area<-"closed"
@@ -198,7 +202,11 @@ for(i in 1:(n_reps)){
 proc.time() - ptm
 
 #Save iterations - change file name as appropriate
-saveRDS(exposure,file=paste0("C:/DFO-MPO/github/Steelhead/Data/IS_Planning/com_plan_exposure_03_",Sys.Date(),".RData"))
+saveRDS(exposure,file=paste0(filename,Sys.Date(),".RData"))
+
+#To read in already-run model iterations:
+#exposure<-readRDS("C:/DFO-MPO/github/Steelhead/Data/IS_Planning/com_plan_exposure_01_2017-09-26.RData")
+
 
 #-------------Get #/% of fish exposed by fishing plan
 total_exposed<-array(as.numeric(NA),dim=c(1,n_reps))
@@ -211,9 +219,11 @@ for(i in 1:n_reps){
 
 #-------------Probability of protecting 80% of the run:
 prob_20_perc<-sum(perc_exposed<=20)/n_reps
-
-r_names<-c("Mean % exposed (over all iterations)","5%","95%","Probabilty of protecting 80% of the run")
-table_data<-c(mean(perc_exposed),mean(perc_exposed)-1.96*sd(perc_exposed),mean(perc_exposed)+1.96*sd(perc_exposed),prob_20_perc)
+mean_perc_exp<-mean(perc_exposed)/100
+sErr<-sqrt(mean_perc_exp*(1-mean_perc_exp)/n_reps)
+  
+r_names<-c("Mean % exposed (over all iterations)","5%","95%","Probability of protecting 80% of the run")
+table_data<-c(mean_perc_exp*100,(mean_perc_exp-2*sErr)*100,(mean_perc_exp+2*sErr)*100,prob_20_perc)
 table<-matrix(c(r_names,table_data),ncol=2,byrow=F)
 rownames(table)<-c("","","","")
 colnames(table)<-c("","")
