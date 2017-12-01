@@ -19,6 +19,15 @@ n_fish<-1000
 n_reps<-1000 #1000 reps with the full 24 fisheries array takes about 8 hrs
 total_reps<-5000 #Total reps after running model multiple times
 
+fishery_names<-c("Area B CM","Area B PK","Area B SK",
+                 "Area D CM","Area D PK","Area D SK",
+                 "Area E CM","Area E PK","Area E SK",
+                 "Area G CM","Area G PK","Area G SK",
+                 "Area H CM","Area H PK","Area H SK",
+                 "BPM DN CM","BPM DN PK","BPM DN SK",
+                 "APM GN CM","APM GN PK","APM GN SK",
+                 "APM BSn CM","APM BSn PK","APM BSn SK")
+
 ###########################################
 #Read in fishery openings data and format
 ###########################################
@@ -298,9 +307,9 @@ sd_perc_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
 
 for(y in 1:13){
   for(f in 1:n_fisheries){
-    mean_exposed[f,y]<-mean(total_exposed[f,y,])
+    mean_exposed[f,y]<-mean(total_exposed[f,y,],na.rm=T)
     mean_perc_exposed[f,y]<-mean_exposed[f,y]/n_fish*100
-    sd_exposed[f,y]<-sd(total_exposed[f,y,])
+    sd_exposed[f,y]<-sd(total_exposed[f,y,],na.rm=T)
     sd_perc_exposed[f,y]<-sd_exposed[f,y]/n_fish*100
   }
 }  
@@ -627,14 +636,17 @@ for(y in 1:13){
   }
 }
 
-
+##############################
 ##############################
 #Print plots to pdf file
+##############################
 ##############################
 
 setwd(plots_dir)
 
+###############################
 #Run timing plots
+###############################
 png(file="annual_runtiming.png")
 
 yr=1995
@@ -685,25 +697,27 @@ plot(sh_runtiming$rt_mean,sh_runtiming$rt_sd, xlab="Mean",ylab="Standard deviati
 
 dev.off()
 
-#Percentage of run exposed by year
 
-if(data_source=="Commercial"){
+#####################################
+#Percentage of run exposed by year
+#####################################
+
 pdf(file="Population Percent Exposure to Commercial Fisheries by Year - Barplots.pdf")
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,3.1), oma=c(1,1,1,1), xpd=FALSE)
 
 yr=2004
-for(y in 1:13){
+for(y in 1:n_years){
   
-  y1<-array(as.numeric(NA),dim=c(1,5))
-  for(f in 1:5){
+  y1<-array(as.numeric(NA),dim=c(1,n_fisheries))
+  for(f in 1:n_fisheries){
     y1[f]<-max(0,mean_perc_exposed[f,y]-sd_perc_exposed[f,y])
   }
   
-  y2<-array(as.numeric(NA),dim=c(1,5))
-  for(f in 1:5){
+  y2<-array(as.numeric(NA),dim=c(1,n_fisheries))
+  for(f in 1:n_fisheries){
     y2[f]<-min(100,mean_perc_exposed[f,y]+sd_perc_exposed[f,y])
   }
-  
+
 barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Exposure in ",yr), xlab="Fishery Area",ylab="% Exposure", 
         names.arg=c("B", "D", "E", "G", "H"), axis.lty=1, ylim=range(0,100))
   arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
@@ -716,30 +730,6 @@ barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Expos
  #mtext(text="Population Percent Exposure by Year",side=3,line=1,outer=TRUE)
  }
 
-}else if(data_source=="FN"){
-  pdf(file="Population Percent Exposure to FN Fisheries by Year - Barplots.pdf")
-  par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,3.1), oma=c(1,1,1,1), xpd=FALSE)
-  
-  yr=2004
-  for(y in 1:13){
-    
-    y1<-array(as.numeric(NA),dim=c(1,3))
-    for(f in 1:3){
-      y1[f]<-max(0,mean_perc_exposed[f,y]-sd_perc_exposed[f,y])
-    }
-    
-    y2<-array(as.numeric(NA),dim=c(1,3))
-    for(f in 1:3){
-      y2[f]<-min(100,mean_perc_exposed[f,y]+sd_perc_exposed[f,y])
-    }
-    
-    barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Exposure in ",yr), xlab="Fishery",ylab="% Exposure", 
-                        names.arg=c("APM BSn","APM GN","BPM DN"), axis.lty=1, ylim=range(0,100))
-    arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
-    
-    yr=yr+1
-  }
-}
 dev.off()
 
 #Percentage of run exposed to all fisheries by year
@@ -770,7 +760,6 @@ pdf(file=paste0("Population Percent Exposure by ",data_source," Fishery - Line p
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1), oma=c(1,1,1,1))
 
-if(data_source=="Commercial"){
   plot(mean_perc_exposed[1,], main="Area B", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
     points(mean_perc_exposed[1,])
@@ -792,32 +781,6 @@ if(data_source=="Commercial"){
     points(mean_perc_exposed[5,])
     arrows(x, mean_perc_exposed[5,]-sd_perc_exposed[5,], x, mean_perc_exposed[5,]+sd_perc_exposed[5,], length=0.05, angle=90, code=3, col="red")
 
-}else if(data_source=="FN"){
-  plot(mean_perc_exposed[1,], main="APM BSn", xlab="Year",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
-    axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    points(mean_perc_exposed[1,])
-    arrows(x, mean_perc_exposed[1,]-sd_perc_exposed[1,], x, mean_perc_exposed[1,]+sd_perc_exposed[1,], length=0.05, angle=90, code=3, col="red")
-
-    y1<-array(as.numeric(NA),dim=c(1,13))
-    for(i in 1:13){
-      y1[i]<-max(0,mean_perc_exposed[2,i]-sd_perc_exposed[2,i])
-    }
-  plot(mean_perc_exposed[2,], main="APM GN", xlab="Year",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
-    axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    points(mean_perc_exposed[2,])
-    arrows(x, y1, x, mean_perc_exposed[2,]+sd_perc_exposed[2,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[3,], main="BPM DN", xlab="Year",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
-    axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    points(mean_perc_exposed[3,])
-    arrows(x, mean_perc_exposed[3,]-sd_perc_exposed[3,], x, mean_perc_exposed[3,]+sd_perc_exposed[3,], length=0.05, angle=90, code=3, col="red")
-  #Turn on if splitting APM DN and SN exposure (remember to rename mains for plot 2 and 3):
-    #plot(mean_perc_exposed[4,], main="BPM DN", xlab="Year",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
-    #axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    #points(mean_perc_exposed[4,])
-    #arrows(x, mean_perc_exposed[4,]-sd_perc_exposed[4,], x, mean_perc_exposed[4,]+sd_perc_exposed[4,], length=0.05, angle=90, code=3)
-}else{ #data_source=="REC"
-  
-}
 #Turning off for now, can turn on if you want to put more than one graph per page
 #mtext(text="Year",side=1,line=1,outer=TRUE)
 #mtext(text="% Exposed",side=2,line=1,outer=TRUE)
