@@ -7,12 +7,20 @@ library("xtable")
 library("svMisc")
 setwd(data_dir)
 
+
+##########################
+#Set inputs
+##########################
+km_end<-624
+n_fisheries<-24
+n_hours<-3336
+n_fish<-1000
+n_reps<-1000 #1000 reps with the full 24 fisheries array takes about 8 hrs
+total_reps<-5000 #Total reps after running model multiple times
+
 ###########################################
 #Read in fishery openings data and format
 ###########################################
-
-km_end<-624
-n_fisheries<-24
 
 fishery_array<- array(as.numeric(NA), dim = c(625,3336,n_fisheries,13)) #row, column, fishery, year
 yr<-2004
@@ -33,14 +41,11 @@ colnames(fishery_array)<-NULL
 
 sh_runtiming<-as.data.frame(read.csv("steelhead_runtiming.csv", header=T))
 
-n_hours<-3336
-
 ###################################
 #set up a fake steelhead population
 #IBM like model
 ###################################
-n_fish<-1000
-n_reps<-1000 #1000 reps with the full 24 fisheries array takes about 8 hrs
+
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
@@ -142,6 +147,9 @@ proc.time() - ptm
 #Save iterations - change file name as appropriate
 saveRDS(exposure,file="ComEO_exposure_4001-5000.RData")
 
+rm(list=ls()) #Reset global environment
+gc() #garbage collector - releases memory back to computer
+
 ##############################
 #Manipulate exposure data
 ##############################
@@ -149,8 +157,6 @@ saveRDS(exposure,file="ComEO_exposure_4001-5000.RData")
 #Add multiple exposure runs together:
 #This is not very dynamic but it is fine for now...
 ####NOTE: The code below only needs to be run if you re-run the model. 
-
-total_reps<-5000
 
 # Initialize array for # of fish exposed by fishery
 total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
@@ -175,7 +181,6 @@ for(i in 1:1000){
     }
   }
 }
-
 
 exposure_temp<-readRDS("ComEO_exposure_1001-2000.RData")
 
@@ -264,7 +269,6 @@ total_exposed<-readRDS("ComEO_tot_exposure_1-5000.RData")
 cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,total_reps))
 
 cml_exposure<-readRDS("ComEO_cml_exposure_1-5000.RData")
-
 
 
 #Convert to average #/% fish exposed by fishery each year
