@@ -150,13 +150,15 @@ saveRDS(exposure,file="ComEO_exposure_4001-5000.RData")
 #This is not very dynamic but it is fine for now...
 ####NOTE: The code below only needs to be run if you re-run the model. 
 
-#-------------Get # of fish exposed by fishery
-
 total_reps<-5000
 
-exposure_temp<-readRDS("ComEO_exposure_1-1000.RData")
-
+# Initialize array for # of fish exposed by fishery
 total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
+
+#Initialize array for cumulative exposure to fisheries
+cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,total_reps))
+
+exposure_temp<-readRDS("ComEO_exposure_1-1000.RData")
 
 for(i in 1:1000){
  for(y in 1:13){
@@ -166,12 +168,29 @@ for(i in 1:1000){
   }
 }
 
+for(i in 1:1000){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i]>0)
+    }
+  }
+}
+
+
 exposure_temp<-readRDS("ComEO_exposure_1001-2000.RData")
 
 for(i in 1001:2000){
   for(y in 1:13){
     for(f in 1:n_fisheries){
       total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-1000]>0)
+    }
+  }
+}
+
+for(i in 1001:2000){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i-1000]>0)
     }
   }
 }
@@ -186,12 +205,28 @@ for(i in 2001:3000){
   }
 }
 
+for(i in 2001:3000){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i-2000]>0)
+    }
+  }
+}
+
 exposure_temp<-readRDS("ComEO_exposure_3001-4000.RData")
 
 for(i in 3001:4000){
   for(y in 1:13){
     for(f in 1:n_fisheries){
       total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-3000]>0)
+    }
+  }
+}
+
+for(i in 3001:4000){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i-3000]>0)
     }
   }
 }
@@ -206,10 +241,19 @@ for(i in 4001:5000){
   }
 }
 
+for(i in 4001:5000){
+  for(y in 1:13){
+    for(n in 1:n_fish){
+      cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i-4000]>0)
+    }
+  }
+}
+
 rm(exposure_temp) #Takes up a lot of memory, best to remove it when done
 gc()
 
 saveRDS(total_exposed,"ComEO_tot_exposure_1-5000.RData")
+saveRDS(cml_exposure,"ComEO_cml_exposure_1-5000.RData")
 
 #The combined iterations are saved, and can be extracted with:
 
@@ -217,11 +261,15 @@ total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
 
 total_exposed<-readRDS("ComEO_tot_exposure_1-5000.RData")
 
+cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,total_reps))
+
+cml_exposure<-readRDS("ComEO_cml_exposure_1-5000.RData")
+
 
 
 #Convert to average #/% fish exposed by fishery each year
 
-#-----Get total and mean exposure for all 8 fisheries together
+#-----Get total and mean exposure for all fisheries together
 
 mean_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
 sd_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
@@ -240,24 +288,6 @@ for(y in 1:13){
 
 #------------Get cumulative exposure to fisheries
   
-cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,total_reps))
-
-exposure_temp<-readRDS("ComEO_exposure_1-1000.RData")
-
-  for(i in 1:1000){
-    for(y in 1:13){
-      for(n in 1:n_fish){
-        cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i]>0)
-      }
-    }
-  }
-
-
-rm(exposure_temp)
-  
-
-
-if(data_source=="Commercial" || data_source=="AllCom"){ #Or if "AllCom"
 cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries+1,13,total_reps))
 mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
 sd_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
@@ -275,36 +305,11 @@ for(f in 0:n_fisheries){
 for(y in 1:13){
    for(f in 1:(n_fisheries+1)){
     mean_cml_exp[f,y]<-mean(cml_exp_iters[f,y,])
-    mean_cml_perc_exp[f,y]<-mean_cml_exp[f,y]/1000*100
+    mean_cml_perc_exp[f,y]<-mean_cml_exp[f,y]/n_fish*100
     sd_cml_exp[f,y]<-sd(cml_exp_iters[f,y,])
-    sd_cml_perc_exp[f,y]<-sd_cml_exp[f,y]/1000*100
+    sd_cml_perc_exp[f,y]<-sd_cml_exp[f,y]/n_fish*100
   }
 }
-}else if(data_source=="FN"){
-  cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
-  mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
-  sd_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
-  mean_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
-  sd_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries,13))
-  
-  for(f in 0:(n_fisheries-1)){
-    for(y in 1:13){
-      for(i in 1:total_reps){
-        cml_exp_iters[f+1,y,i]<-sum(cml_exposure[,y,i]==f)
-      }
-    }
-  }
-  
-  for(y in 1:13){
-    for(f in 1:n_fisheries){
-      mean_cml_exp[f,y]<-mean(cml_exp_iters[f,y,])
-      mean_cml_perc_exp[f,y]<-mean_cml_exp[f,y]/1000*100
-      sd_cml_exp[f,y]<-sd(cml_exp_iters[f,y,])
-      sd_cml_perc_exp[f,y]<-sd_cml_exp[f,y]/1000*100
-    }
-  }
-}
-rm(exposure_temp) #takes up a lot of space, might as well remove
 
 #------------Get incremental exposure to fisheries
 
