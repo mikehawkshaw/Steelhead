@@ -14,6 +14,7 @@ setwd(data_dir)
 km_end<-624
 n_fisheries<-24
 n_hours<-3336
+n_years<-13
 n_fish<-1000
 n_reps<-1000 #1000 reps with the full 24 fisheries array takes about 8 hrs
 total_reps<-5000 #Total reps after running model multiple times
@@ -22,8 +23,11 @@ total_reps<-5000 #Total reps after running model multiple times
 #Read in fishery openings data and format
 ###########################################
 
-fishery_array<- array(as.numeric(NA), dim = c(625,3336,n_fisheries,13)) #row, column, fishery, year
+fishery_array<- array(as.numeric(NA), dim = c(625,3336,n_fisheries,n_years)) #row, column, fishery, year
+openings<-array(NA,dim=c((n_fisheries*n_years),4))
+
 yr<-2004
+j=1
 
 for(i in 1:13){
   
@@ -33,11 +37,22 @@ file.names <- dir(path, pattern =".csv")
 
 for(k in 1:n_fisheries){
   fishery_array[,,k,i] <- as.matrix(read.csv(paste0(path,file.names[k]),colClasses=c("NULL",rep(NA,3336))))
+  #Does this fishery have at least one opening?
+    openings[j,1]<-k
+    openings[j,2]<-i
+    openings[j,3]<-sum(fishery_array[,,k,i])>0
+    openings[j,4]<-file.names[k]
+    j=j+1
 }
 yr=yr+1
 }
 
 colnames(fishery_array)<-NULL
+
+colnames(openings)<-c("Fishery","Year","Openings","File_Name")
+openings<-as.data.frame(openings)
+
+saveRDS(openings,"Fisheries_with_openings.RData")
 
 sh_runtiming<-as.data.frame(read.csv("steelhead_runtiming.csv", header=T))
 
