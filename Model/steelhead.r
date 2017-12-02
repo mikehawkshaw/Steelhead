@@ -33,10 +33,9 @@ fishery_names<-c("Area B CM","Area B PK","Area B SK",
 ###########################################
 
 fishery_array<- array(as.numeric(NA), dim = c(625,3336,n_fisheries,n_years)) #row, column, fishery, year
-openings<-array(NA,dim=c((n_fisheries*n_years),4))
+openings<-array(NA,dim=c(n_fisheries,n_years))
 
 yr<-2004
-j=1
 
 for(i in 1:13){
   
@@ -47,11 +46,7 @@ file.names <- dir(path, pattern =".csv")
 for(k in 1:n_fisheries){
   fishery_array[,,k,i] <- as.matrix(read.csv(paste0(path,file.names[k]),colClasses=c("NULL",rep(NA,3336))))
   #Does this fishery have at least one opening?
-    openings[j,1]<-k
-    openings[j,2]<-i
-    openings[j,3]<-sum(fishery_array[,,k,i])>0
-    openings[j,4]<-file.names[k]
-    j=j+1
+    openings[k,i]<-sum(fishery_array[,,k,i])>0
 }
 yr=yr+1
 }
@@ -717,7 +712,7 @@ for(y in 1:n_years){
   for(f in 1:n_fisheries){
     y2[f]<-min(100,mean_perc_exposed[f,y]+sd_perc_exposed[f,y])
   }
-
+  
 barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Exposure in ",yr), xlab="Fishery Area",ylab="% Exposure", 
         names.arg=c("B", "D", "E", "G", "H"), axis.lty=1, ylim=range(0,100))
   arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
