@@ -328,9 +328,9 @@ for(f in 0:n_fisheries){
 
 for(y in 1:n_years){
    for(f in 1:(n_fisheries+1)){
-    mean_cml_exp[f,y]<-mean(cml_exp_iters[f,y,])
+    mean_cml_exp[f,y]<-mean(cml_exp_iters[f,y,],na.rm=T)
     mean_cml_perc_exp[f,y]<-mean_cml_exp[f,y]/n_fish*100
-    sd_cml_exp[f,y]<-sd(cml_exp_iters[f,y,])
+    sd_cml_exp[f,y]<-sd(cml_exp_iters[f,y,],na.rm=T)
     sd_cml_perc_exp[f,y]<-sd_cml_exp[f,y]/n_fish*100
   }
 }
@@ -767,39 +767,40 @@ dev.off()
 
 pdf(file=paste0("Population Cumulative Perc Exposure to Commercial Fisheries - Bar Plots.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
-par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,4.1), oma=c(1,1,1,1))
+par(mfrow=c(1,1),mar=c(5.1,3.1,3.1,4.1), oma=c(1,1,1,1))
 
+palette(c(grDevices::rainbow(17)))
 
 #Plot of all years together
 barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto Commercial Fisheries by Year",
-          xlab="Year", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey"),
+          xlab="Year", col=1:17,
           ylab="% Exposure",
-          legend = c(0,1,2,3,4,5),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),args.legend=list(
-            x=18,y=100,bty="n"))
+          legend = seq(0,16,by=1),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),
+          args.legend=list(x=18,y=100,bty="n"))
 
 #Plots for each year separately
+par(mfrow=c(1,1),mar=c(5.1,4.1,3.1,0.1), oma=c(1,0.5,1,0.5))
 
 yr=2004
-for(y in 1:13){
+for(y in 1:n_years){
   
-  y1<-array(as.numeric(NA),dim=c(1,6))
-  for(f in 1:6){
+  y1<-array(as.numeric(NA),dim=c(1,n_fisheries+1))
+  for(f in 1:n_fisheries){
     y1[f]<-max(0,mean_cml_perc_exp[f,y]-sd_cml_perc_exp[f,y])
   }
   
-  y2<-array(as.numeric(NA),dim=c(1,6))
-  for(f in 1:6){
+  y2<-array(as.numeric(NA),dim=c(1,n_fisheries+1))
+  for(f in 1:n_fisheries){
     y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
   }
   
-barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
-        xlab="# of fisheries each fish exposed to", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey"),
-        ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3,4,5))
+barCenters<-barplot(mean_cml_perc_exp[1:17,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
+        xlab="# of fisheries each fish exposed to", col=1:17,
+        ylab="% Exposure", ylim=range(0,100),names.arg=seq(0,16,by=1))
   arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
 
   yr=yr+1
 }
-
 
 dev.off()
 
