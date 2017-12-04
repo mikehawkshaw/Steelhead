@@ -737,55 +737,25 @@ barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Expos
 
 dev.off()
 
-#Percentage of run exposed to all fisheries by year
-
-#Get # of fish exposed to any fishery
-
-is_exposed<-0
-total_exposed_all_fisheries<-rep(0,13)
-for(y in 1:13){
-  for(ind in 1:n_fish){
-     for(f in 1:5){
-        is_exposed <- is_exposed + exposure[ind,f,y]
-     }
-    if(is_exposed>0){
-      total_exposed_all_fisheries[y]<- total_exposed_all_fisheries[y] + 1
-     }
-  }
-}
-###This results in 100% of the population being exposed to at least one fishery each year, so not bothering with a plot.
-
-
 #--------Plots of probability of exposure with error bars
 
 #Percentage of run exposed by fishery
 
 x<-1:13
-pdf(file=paste0("Population Percent Exposure by ",data_source," Fishery - Line plots w Error bars.pdf"))
+pdf(file=paste0("Population Percent Exposure by Fishery - Line plots w Error bars.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1), oma=c(1,1,1,1))
 
-  plot(mean_perc_exposed[1,], main="Area B", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
+for(f in 1:n_fisheries){
+  plot(mean_perc_exposed[f,], main=fishery_names[f], xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
     axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    points(mean_perc_exposed[1,])
-    arrows(x, mean_perc_exposed[1,]-sd_perc_exposed[1,], x, mean_perc_exposed[1,]+sd_perc_exposed[1,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[2,], main="Area D", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
-    axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    points(mean_perc_exposed[2,])
-    arrows(x, mean_perc_exposed[2,]-sd_perc_exposed[2,], x, mean_perc_exposed[2,]+sd_perc_exposed[2,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[3,], main="Area E", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
-    axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    points(mean_perc_exposed[3,])
-    arrows(x, mean_perc_exposed[3,]-sd_perc_exposed[3,], x, mean_perc_exposed[3,]+sd_perc_exposed[3,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[4,], main="Area G", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
-    axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    points(mean_perc_exposed[4,])
-    arrows(x, mean_perc_exposed[4,]-sd_perc_exposed[4,], x, mean_perc_exposed[4,]+sd_perc_exposed[4,], length=0.05, angle=90, code=3, col="red")
-  plot(mean_perc_exposed[5,], main="Area H", xlab="",ylab="% Exposed", xaxt="n", type="l", bty="n", lty=1, ylim=range(0,100))
-    axis(1, at=1:13,labels=seq(from=2004,to=2016, by=1), las=2)
-    points(mean_perc_exposed[5,])
-    arrows(x, mean_perc_exposed[5,]-sd_perc_exposed[5,], x, mean_perc_exposed[5,]+sd_perc_exposed[5,], length=0.05, angle=90, code=3, col="red")
+    arrows(x, mean_perc_exposed[f,]-sd_perc_exposed[f,], x, mean_perc_exposed[f,]+sd_perc_exposed[f,], length=0.05, angle=90, code=3, col="red")
+    points(mean_perc_exposed[f,],pch=ifelse(openings[f,x]=="TRUE",16,1))
+    
+  legend("topright", legend="No openings",pch=1,bty="n")
+}
 
+   
 #Turning off for now, can turn on if you want to put more than one graph per page
 #mtext(text="Year",side=1,line=1,outer=TRUE)
 #mtext(text="% Exposed",side=2,line=1,outer=TRUE)
