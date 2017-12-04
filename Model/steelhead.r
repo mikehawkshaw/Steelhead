@@ -1,16 +1,45 @@
 #steelhead.r
 #Steelhead Predictors of In-river Timing and Exposure models
+#Author: Brittany Jenewein, Fisheries & Oceans Canada
+#Updated: 04 December 2017
 
-#read in data
+#---------------------------------------------------------------------------------------------
+#CONTENTS (use Ctrl+F to help find specific sections):
+#---------------------------------------------------------------------------------------------
+#--SET INPUTS
+#-----Read in fishery openings data and format
+#-----Population characteristics
+#--EXPOSURE MODEL
+#-----Move fish BACKWARD from Albion through fisheries
+#-----Move fish FORWARD from Albion through fisheries
+#--POST-MODEL RUNS: Manipulate exposure data
+#--LOAD SAVED ITERATIONS
+#-----Get total and mean exposure for all fisheries together
+#-----Get cumulative exposure to fisheries
+#-----Get incremental exposure to fisheries [NEEDS UPDATING]
+#--OUTPUTS: Print plots to PDF files
+#-----PLOT SET 1: Annual run-timing
+#--------Mean (50% date) plus spread of run
+#--------Mean with SD around mean (not 50% date plus spread of run)
+#--------Estimated mean annual run timing at Albion
+#--------Mean vs SD to show no pattern between 50% date and spread of return
+#-----PLOT SET 2: Percentage of run exposed by year and fishery
+#--------Population Percent Exposure to Commercial Fisheries by Year - Barplots
+#--------Population Percent Exposure by Fishery - Line plots w Error bars
+#-----PLOT SET 3: Cumulative Exposure by year
+#--------Population Cumulative Percent Exposure to Commercial Fisheries - Bar Plots
+#-----PLOT SET 4: Cumulative Incremental Exposure by Fishery
+#--------Population Cumulative Incremental Exposure by Fishery - Line plots w Error bars
+#---------------------------------------------------------------------------------------------
+
+##########################
+#--SET INPUTS
+##########################
 source("directories.R")
 library("xtable")
 library("svMisc")
 setwd(data_dir)
 
-
-##########################
-#Set inputs
-##########################
 km_end<-624
 n_fisheries<-24
 n_hours<-3336
@@ -28,9 +57,9 @@ fishery_names<-c("Area B CM","Area B PK","Area B SK",
                  "APM GN CM","APM GN PK","APM GN SK",
                  "APM BSn CM","APM BSn PK","APM BSn SK")
 
-###########################################
-#Read in fishery openings data and format
-###########################################
+###############################################
+#-----Read in fishery openings data and format
+###############################################
 
 fishery_array<- array(as.numeric(NA), dim = c(625,3336,n_fisheries,n_years)) #row, column, fishery, year
 openings<-array(NA,dim=c(n_fisheries,n_years))
@@ -60,10 +89,7 @@ saveRDS(openings,"Fisheries_with_openings.RData")
 
 sh_runtiming<-as.data.frame(read.csv("steelhead_runtiming.csv", header=T))
 
-###################################
-#set up a fake steelhead population
-#IBM like model
-###################################
+#Set up a fake steelhead population (IBM-like model)
 
 fish<-seq(1,n_fish,by=1)
 
@@ -72,9 +98,9 @@ exposure<-array(0,dim=c(n_fish,n_fisheries,n_years,n_reps))
 speeds<-rep(0,n_fish)
 passage_date<-rep(0,n_fish)
 
-################################################################################################
-#Population characteristics (these are the hypotheses about the population that will be tested)
-################################################################################################
+#####################################################################################################
+#-----Population characteristics (these are the hypotheses about the population that will be tested)
+#####################################################################################################
 
 #Start the clock
 ptm <- proc.time()
@@ -118,9 +144,12 @@ speed_FW_sd<-3
 speeds_SW<-(pmax(9,pmin(55,rnorm(fish,speed_SW_mean,speed_SW_sd))))/24 #km/hr
 speeds_FW<-(pmax(9,pmin(55,rnorm(fish,speed_FW_mean,speed_FW_sd))))/24 #km/hr
 
-#################################################
+
+###################
+#--EXPOSURE MODEL
+###################
+
 #Move fish BACKWARD from Albion through fisheries
-#################################################
 
 for(loc in 1:494){ #494 is km where Albion located
        
@@ -136,9 +165,7 @@ for(loc in 1:494){ #494 is km where Albion located
   }
 }
 
-#################################################
 #Move fish FORWARD from Albion through fisheries
-#################################################
 
 #Assuming switch from SW to FW speeds happens at Albion, otherwise model gets too complicated. 
 #Probably need to explore impacts.
@@ -170,9 +197,9 @@ saveRDS(exposure,file="ComEO_exposure_4001-5000.RData")
 rm(list=ls()) #Reset global environment
 gc() #garbage collector - releases memory back to computer
 
-##############################
-#Manipulate exposure data
-##############################
+#############################################
+#--POST-MODEL RUNS: Manipulate exposure data
+#############################################
 
 #Add multiple exposure runs together:
 #This is not very dynamic but it is fine for now...
@@ -280,6 +307,10 @@ gc()
 saveRDS(total_exposed,"ComEO_tot_exposure_1-5000.RData")
 saveRDS(cml_exposure,"ComEO_cml_exposure_1-5000.RData")
 
+#########################
+#--LOAD SAVED ITERATIONS
+#########################
+
 #The combined iterations are saved, and can be extracted with:
 
 total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,n_years,total_reps))
@@ -310,7 +341,7 @@ for(y in 1:n_years){
   }
 }  
 
-#------------Get cumulative exposure to fisheries
+#-----Get cumulative exposure to fisheries
   
 cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries+1,n_years,total_reps))
 mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,n_years))
@@ -335,7 +366,7 @@ for(y in 1:n_years){
   }
 }
 
-#------------Get incremental exposure to fisheries
+#-----Get incremental exposure to fisheries [NEEDS UPDATING]
 
 if(data_source=="Commercial"){
 
@@ -493,8 +524,6 @@ for(y in 1:13){
   
 }
 
-
-
 #-----------Incremental exposure of all 8 fisheries together--------------------------------------------------
 
 
@@ -632,18 +661,19 @@ for(y in 1:13){
   }
 }
 
-##############################
-##############################
-#Print plots to pdf file
-##############################
-##############################
+###################################
+#--OUTPUTS: Print plots to PDF files
+###################################
 
 setwd(plots_dir)
 
-###############################
-#Run timing plots
-###############################
+#####################################
+#-----PLOT SET 1: Annual run-timing
+#####################################
+
 png(file="annual_runtiming.png")
+
+#--------Mean (50% date) plus spread of run
 
 yr=1995
 y1<-array(as.numeric(NA),dim=c(1,22))
@@ -659,7 +689,8 @@ for(y in 1:22){
   yr=yr+1
 }
 
-#Plot of mean with sd around mean (not 50% date plus spread of run)
+#--------Mean with SD around mean (not 50% date plus spread of run)
+
 yr=1995
 y1<-array(as.numeric(NA),dim=c(1,22))
 for(y in 1:22){
@@ -674,8 +705,7 @@ for(y in 1:22){
   yr=yr+1
 }
 
-
-#Estimated mean annual run timing at Albion
+#--------Estimated mean annual run timing at Albion
 
 par(mar=c(6,5,1,1))
 x<-1:22
@@ -688,15 +718,17 @@ plot(sh_runtiming$rt_mean, main="", xlab="Year",ylab="Day of Year", xaxt="n", ya
 dev.off()
 
 png(file="meanvssd_runtiming.png")
-#mean vs sd to show no pattern between 50% date and spread of return
+
+#-----Mean vs SD to show no pattern between 50% date and spread of return
 plot(sh_runtiming$rt_mean,sh_runtiming$rt_sd, xlab="Mean",ylab="Standard deviation")
 
 dev.off()
 
+################################################################
+#-----PLOT SET 2: Percentage of run exposed by year and fishery
+################################################################
 
-#####################################
-#Percentage of run exposed by year
-#####################################
+#--------Population Percent Exposure to Commercial Fisheries by Year - Barplots
 
 pdf(file="Population Percent Exposure to Commercial Fisheries by Year - Barplots.pdf")
 par(mfrow=c(1,1),mar=c(5.5,4.1,4.1,3.1), oma=c(1,1,1,1), xpd=FALSE)
@@ -738,9 +770,7 @@ barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Expos
 
 dev.off()
 
-#--------Plots of probability of exposure with error bars
-
-#Percentage of run exposed by fishery
+#--------Population Percent Exposure by Fishery - Line plots w Error bars
 
 x<-1:13
 pdf(file=paste0("Population Percent Exposure by Fishery - Line plots w Error bars.pdf"))
@@ -763,7 +793,11 @@ for(f in 1:n_fisheries){
 #mtext(text="Population Percent Exposure by Fishery",side=3,line=1,outer=TRUE)
 dev.off()
 
-#-----------Plots of cumulative exposure--------------------------
+##############################################
+#-----PLOT SET 3: Cumulative Exposure by year
+##############################################
+
+#--------Population Cumulative Percent Exposure to Commercial Fisheries - Bar Plots
 
 pdf(file=paste0("Population Cumulative Perc Exposure to Commercial Fisheries - Bar Plots.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
@@ -804,11 +838,15 @@ barCenters<-barplot(mean_cml_perc_exp[1:17,y], main=paste0("Average Cumulative E
 
 dev.off()
 
-#-------------Plots of incremental exposure------------------------
+###########################################################
+#-----PLOT SET 4: Cumulative Incremental Exposure by year
+##########################################################
+
+#--------Population Cumulative Incremental Exposure by Fishery - Line plots w Error bars [NEEDS UPDATING]
 
 #---Currently set up to calculate CUMULATIVE incr. exposure in the AllCom section and PDF title
 
-pdf(file=paste0("Population Cumulative Incremental Exposure by ",data_source," Fishery - Line plots w Error bars.pdf"))
+pdf(file=paste0("Population Cumulative Incremental Exposure by Fishery - Line plots w Error bars.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
 #Default mar=c(5.1,4.1,4.1,2.1)
 par(mfrow=c(2,1),mar=c(5.1,4.1,1,0.5), oma=c(1,1,1,1))
