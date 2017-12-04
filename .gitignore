@@ -23,3 +23,8 @@ myNotes.*
 .Rapp.history
 *.doc
 *.docx
+*.msg
+**/Outputs
+**/Report
+**/IS_Planning
+**/Sensitivity_Analysis
