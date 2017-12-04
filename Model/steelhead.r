@@ -37,7 +37,7 @@ openings<-array(NA,dim=c(n_fisheries,n_years))
 
 yr<-2004
 
-for(i in 1:13){
+for(i in 1:n_years){
   
 path = paste0("C:/DFO-MPO/github/Steelhead/Data/BySpecies/",yr,"/")
 
@@ -68,7 +68,7 @@ sh_runtiming<-as.data.frame(read.csv("steelhead_runtiming.csv", header=T))
 fish<-seq(1,n_fish,by=1)
 
 #each fish has characteristics and they are in these vectors
-exposure<-array(0,dim=c(n_fish,n_fisheries,13,n_reps))
+exposure<-array(0,dim=c(n_fish,n_fisheries,n_years,n_reps))
 speeds<-rep(0,n_fish)
 passage_date<-rep(0,n_fish)
 
@@ -85,7 +85,8 @@ set.seed(i)
 yr=2004 #re-initialize year variable
 
 #Loop through each year
-for(y in 1:13){
+for(y in 1:n_years){
+
 #Get day of year for July 15 of year of interest (season start)
 seasonstart_doy <- as.numeric(strftime(paste(yr,"-07-15",sep=""), format = "%j"))
 
@@ -178,15 +179,15 @@ gc() #garbage collector - releases memory back to computer
 ####NOTE: The code below only needs to be run if you re-run the model. 
 
 # Initialize array for # of fish exposed by fishery
-total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
+total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,n_years,total_reps))
 
 #Initialize array for cumulative exposure to fisheries
-cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,total_reps))
+cml_exposure<-array(as.numeric(NA),dim=c(n_fish,n_years,total_reps))
 
 exposure_temp<-readRDS("ComEO_exposure_1-1000.RData")
 
 for(i in 1:1000){
- for(y in 1:13){
+ for(y in 1:n_years){
   for(f in 1:n_fisheries){
    total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i]>0)
    }
@@ -194,7 +195,7 @@ for(i in 1:1000){
 }
 
 for(i in 1:1000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(n in 1:n_fish){
       cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i]>0)
     }
@@ -204,7 +205,7 @@ for(i in 1:1000){
 exposure_temp<-readRDS("ComEO_exposure_1001-2000.RData")
 
 for(i in 1001:2000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(f in 1:n_fisheries){
       total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-1000]>0)
     }
@@ -212,7 +213,7 @@ for(i in 1001:2000){
 }
 
 for(i in 1001:2000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(n in 1:n_fish){
       cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i-1000]>0)
     }
@@ -222,7 +223,7 @@ for(i in 1001:2000){
 exposure_temp<-readRDS("ComEO_exposure_2001-3000.RData")
 
 for(i in 2001:3000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(f in 1:n_fisheries){
       total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-2000]>0)
     }
@@ -230,7 +231,7 @@ for(i in 2001:3000){
 }
 
 for(i in 2001:3000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(n in 1:n_fish){
       cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i-2000]>0)
     }
@@ -240,7 +241,7 @@ for(i in 2001:3000){
 exposure_temp<-readRDS("ComEO_exposure_3001-4000.RData")
 
 for(i in 3001:4000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(f in 1:n_fisheries){
       total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-3000]>0)
     }
@@ -248,7 +249,7 @@ for(i in 3001:4000){
 }
 
 for(i in 3001:4000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(n in 1:n_fish){
       cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i-3000]>0)
     }
@@ -258,7 +259,7 @@ for(i in 3001:4000){
 exposure_temp<-readRDS("ComEO_exposure_4001-5000.RData")
 
 for(i in 4001:5000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(f in 1:n_fisheries){
       total_exposed[f,y,i]<-sum(exposure_temp[,f,y,i-4000]>0)
     }
@@ -266,7 +267,7 @@ for(i in 4001:5000){
 }
 
 for(i in 4001:5000){
-  for(y in 1:13){
+  for(y in 1:n_years){
     for(n in 1:n_fish){
       cml_exposure[n,y,i]<-sum(exposure_temp[n,,y,i-4000]>0)
     }
@@ -281,11 +282,11 @@ saveRDS(cml_exposure,"ComEO_cml_exposure_1-5000.RData")
 
 #The combined iterations are saved, and can be extracted with:
 
-total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13,total_reps))
+total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,n_years,total_reps))
 
 total_exposed<-readRDS("ComEO_tot_exposure_1-5000.RData")
 
-cml_exposure<-array(as.numeric(NA),dim=c(n_fish,13,total_reps))
+cml_exposure<-array(as.numeric(NA),dim=c(n_fish,1n_years,total_reps))
 
 cml_exposure<-readRDS("ComEO_cml_exposure_1-5000.RData")
 
@@ -294,13 +295,13 @@ cml_exposure<-readRDS("ComEO_cml_exposure_1-5000.RData")
 
 #-----Get total and mean exposure for all fisheries together
 
-mean_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
-sd_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
+mean_exposed<-array(as.numeric(NA),dim=c(n_fisheries,n_years))
+sd_exposed<-array(as.numeric(NA),dim=c(n_fisheries,n_years))
 
-mean_perc_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
-sd_perc_exposed<-array(as.numeric(NA),dim=c(n_fisheries,13))
+mean_perc_exposed<-array(as.numeric(NA),dim=c(n_fisheries,n_years))
+sd_perc_exposed<-array(as.numeric(NA),dim=c(n_fisheries,n_years))
 
-for(y in 1:13){
+for(y in 1:n_years){
   for(f in 1:n_fisheries){
     mean_exposed[f,y]<-mean(total_exposed[f,y,],na.rm=T)
     mean_perc_exposed[f,y]<-mean_exposed[f,y]/n_fish*100
@@ -311,21 +312,21 @@ for(y in 1:13){
 
 #------------Get cumulative exposure to fisheries
   
-cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries+1,13,total_reps))
-mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
-sd_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
-mean_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
-sd_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,13))
+cml_exp_iters<-array(as.numeric(NA),dim=c(n_fisheries+1,n_years,total_reps))
+mean_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,n_years))
+sd_cml_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,n_years))
+mean_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,n_years))
+sd_cml_perc_exp<-array(as.numeric(NA),dim=c(n_fisheries+1,n_years))
 
 for(f in 0:n_fisheries){
-  for(y in 1:13){
+  for(y in 1:n_years){
    for(i in 1:total_reps){
     cml_exp_iters[f+1,y,i]<-sum(cml_exposure[,y,i]==f)
    }
   }
 }
 
-for(y in 1:13){
+for(y in 1:n_years){
    for(f in 1:(n_fisheries+1)){
     mean_cml_exp[f,y]<-mean(cml_exp_iters[f,y,])
     mean_cml_perc_exp[f,y]<-mean_cml_exp[f,y]/n_fish*100
@@ -764,11 +765,11 @@ dev.off()
 
 #-----------Plots of cumulative exposure--------------------------
 
-pdf(file=paste0("Population Cumulative Perc Exposure to ",data_source," Fisheries - Bar Plots.pdf"))
+pdf(file=paste0("Population Cumulative Perc Exposure to Commercial Fisheries - Bar Plots.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,4.1), oma=c(1,1,1,1))
 
-if(data_source=="Commercial"){
+
 #Plot of all years together
 barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto Commercial Fisheries by Year",
           xlab="Year", col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey"),
@@ -799,72 +800,7 @@ barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Expos
   yr=yr+1
 }
 
-}else if(data_source=="FN"){
-  #Plot of all years together
-  barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto FN Fisheries by Year",
-          xlab="Year", col=c("lightblue","red","green4","darkgoldenrod1"),
-          ylab="% Exposure",
-          legend = c(0,1,2,3),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),args.legend=list(
-            x=18,y=100,bty="n"))
-  
-  #Plots for each year separately
-  
-  yr=2004
-  for(y in 1:13){
-    
-    y1<-array(as.numeric(NA),dim=c(1,4))
-      for(f in 1:4){
-      y1[f]<-max(0,mean_cml_perc_exp[f,y]-sd_cml_perc_exp[f,y])
-      }
-    
-    y2<-array(as.numeric(NA),dim=c(1,4))
-      for(f in 1:4){
-        y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
-      }
-    
-    barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Exposure \nto FN Fisheries in ",yr),
-                        xlab="# of fisheries each fish exposed to", col=c("lightblue","red","green4","darkgoldenrod1"),
-                        ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3))
-    arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
-    
-    yr=yr+1
-  }
-}else if(data_source=="AllCom"){
-  
-#col=c("lightblue","red","green4","darkgoldenrod1","mediumorchid4","darkgrey","lightpink","chartreuse","royalblue","black")  
-#col=c("gray90","gray80","gray70","gray60","gray50","gray40","gray30","gray20","gray10","gray0")
-  
-  #Plot of all years together
-  barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto Commercial Fisheries by Year",
-          xlab="Year", col=c("red","orange","yellow","yellowgreen","green","darkcyan","blue","purple","black"),
-          ylab="% Exposure",
-          legend = c(0,1,2,3,4,5,6,7,8),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),args.legend=list(
-            x=18,y=100,bty="n"))
-  
-  #Plots for each year separately
 
-  yr=2004
-  for(y in 1:13){
-    
-    y1<-array(as.numeric(NA),dim=c(1,9))
-    for(f in 1:9){
-      y1[f]<-max(0,mean_cml_perc_exp[f,y]-sd_cml_perc_exp[f,y])
-    }
-    
-    y2<-array(as.numeric(NA),dim=c(1,9))
-    for(f in 1:9){
-      y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
-    }
-    
-    barCenters<-barplot(mean_cml_perc_exp[,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
-                        xlab="# of fisheries each fish exposed to", col=c("red","orange","yellow","yellowgreen","green","darkcyan","blue","purple","black"),
-                        ylab="% Exposure", ylim=range(0,100),names.arg=c(0,1,2,3,4,5,6,7,8))
-    arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
-    
-    yr=yr+1
-  }
-  
-}
 dev.off()
 
 #-------------Plots of incremental exposure------------------------
