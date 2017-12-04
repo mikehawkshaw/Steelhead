@@ -286,7 +286,7 @@ total_exposed<-array(as.numeric(NA),dim=c(n_fisheries,n_years,total_reps))
 
 total_exposed<-readRDS("ComEO_tot_exposure_1-5000.RData")
 
-cml_exposure<-array(as.numeric(NA),dim=c(n_fish,1n_years,total_reps))
+cml_exposure<-array(as.numeric(NA),dim=c(n_fish,n_years,total_reps))
 
 cml_exposure<-readRDS("ComEO_cml_exposure_1-5000.RData")
 
