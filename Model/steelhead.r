@@ -767,7 +767,7 @@ dev.off()
 
 pdf(file=paste0("Population Cumulative Perc Exposure to Commercial Fisheries - Bar Plots.pdf"))
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
-par(mfrow=c(1,1),mar=c(5.1,3.1,3.1,4.1), oma=c(1,1,1,1))
+par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,4.1), oma=c(1,1,1,1))
 
 palette(c(grDevices::rainbow(17)))
 
