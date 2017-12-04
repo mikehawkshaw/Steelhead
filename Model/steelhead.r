@@ -698,7 +698,7 @@ dev.off()
 #####################################
 
 pdf(file="Population Percent Exposure to Commercial Fisheries by Year - Barplots.pdf")
-par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,3.1), oma=c(1,1,1,1), xpd=FALSE)
+par(mfrow=c(1,1),mar=c(5.5,4.1,4.1,3.1), oma=c(1,1,1,1), xpd=FALSE)
 
 yr=2004
 for(y in 1:n_years){
@@ -712,10 +712,20 @@ for(y in 1:n_years){
   for(f in 1:n_fisheries){
     y2[f]<-min(100,mean_perc_exposed[f,y]+sd_perc_exposed[f,y])
   }
-  
-barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Exposure in ",yr), xlab="Fishery Area",ylab="% Exposure", 
-        names.arg=c("B", "D", "E", "G", "H"), axis.lty=1, ylim=range(0,100))
+
+
+barCenters<-barplot(mean_perc_exposed[,y], main=paste0("Population Percent Exposure in ",yr), xlab="",ylab="% Exposure", 
+        names.arg=fishery_names, axis.lty=1, ylim=range(0,100),las=3)
   arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
+  
+  for(f in 1:n_fisheries){
+    if(openings[f,y]=="FALSE"){
+       text(barCenters[f],3,"*")
+    }
+  }
+  
+  text(20,90,adj=c(0,0),"* No fishery openings")
+  
 
   yr=yr+1
  
