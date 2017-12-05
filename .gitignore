@@ -28,3 +28,8 @@ myNotes.*
 **/Report
 **/IS_Planning
 **/Sensitivity_Analysis
+**/Data/chum_runtiming.csv
+**/Data/exposure100reps.RData
+**/Data/openings.xlsx
+**/Data/steelhead_runtiming_Stan.csv
+**/Model/chum_exposure.r
