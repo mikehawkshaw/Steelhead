@@ -96,3 +96,28 @@ lines(albion_annual[,1],pth, col="dark red",lwd=2)
 #Get run timing estimates
 mean(mu_rt_m)
 mean(mu_rt_sd)
+
+par(mfcol=c(1,3))
+#If we're going to use these plots in publications/presentations we'll need to fix the x-axis title widths and/or add line breaks
+m_mean = mean(rt_m)
+m_sd = sd(rt_m)
+m_aprox<-dnorm(min(albion_annual$jday):max(albion_annual$jday),m_mean,1.5*m_sd)
+#plot(density(m[2:n_col]))
+hist(rt_m,prob=TRUE, breaks=20, main="",xlab="Distribution of means (N=22)")
+lines(min(albion_annual$jday):max(albion_annual$jday),m_aprox,col="red")
+mtext(" (a) ",cex=0.75,line=-1.5,adj=1)
+
+s_mean = mean(rt_sd)
+s_sd = sd(rt_sd)
+s_aprox<-dnorm(5:50,s_mean,1.5*s_sd)
+#plot(density(s[2:53]))
+hist(rt_sd,prob=TRUE, breaks=20, main="",xlab="Distribution of standard deviations (N=22)")
+lines(5:50,s_aprox,col="red")
+mtext(" (b) ",cex=0.75,line=-1.5,adj=1)
+
+plot(rt_m,rt_sd, xlab="Mean",ylab="Standard deviation")
+mtext(" (c) ",cex=0.75,line=-1.5,adj=1)
+
+par(mfcol=c(1,1))
+
+plot(years,rt_m, xlab="Year", ylab="50% date", main="No Time Trend in Date of 50% return")
