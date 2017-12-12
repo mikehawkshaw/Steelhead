@@ -46,6 +46,7 @@ n_hours<-3336
 n_years<-13
 n_fish<-1000
 n_reps<-1000 #1000 reps with the full 24 fisheries array takes about 8 hrs
+offset<-n_reps-1000 #Offset for number of iterations, for when running >1000
 total_reps<-5000 #Total reps after running model multiple times
 
 fishery_names<-c("Area B CM","Area B PK","Area B SK",
@@ -82,7 +83,7 @@ yr=yr+1
 
 colnames(fishery_array)<-NULL
 
-colnames(openings)<-c("Fishery","Year","Openings","File_Name")
+colnames(openings)<-c("Fishery","Year")
 openings<-as.data.frame(openings)
 
 saveRDS(openings,"Fisheries_with_openings.RData")
@@ -105,7 +106,7 @@ passage_date<-rep(0,n_fish)
 #Start the clock
 ptm <- proc.time()
 
-for(i in 4001:(n_reps+4000)){
+for(i in (1+offset):(n_reps+offset)){
 set.seed(i)
   
 yr=2004 #re-initialize year variable
@@ -133,7 +134,7 @@ m_vec<-rnorm(n_reps,rt_mean,rt_mean_sd)
 s_vec<-rnorm(n_reps,rt_sd,rt_sd_sd)
 
 #passage_date = the date that the fish passes Albion
-passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i-4000],s_vec[i-4000]))))
+passage_date<-(pmax(30,pmin(140,rnorm(fish,m_vec[i-offset],s_vec[i-offset]))))
 passage_hour<-passage_date*24 #convert to hours. Hour 0 = midnight July 15
 
 #Speed that the fish travel. Assumptions based on speed of other salmonids.
@@ -159,9 +160,9 @@ for(loc in 1:494){ #494 is km where Albion located
   #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
   #If the fish is in the area before the time we care about, then obviously it's not exposed to any fisheries. May want to
   #edit later so that we can run it longer. Will need to make the opening matrices larger.
-  exposure[,f,y,i-4000]<-ifelse(time_at_loc>0 & time_at_loc<3335,
-                          exposure[,f,y,i-4000]+fishery_array[loc+1,
-                                            ifelse(time_at_loc>0 & time_at_loc<3335,time_at_loc+1,1),f,y],exposure[,f,y,i-4000])
+  exposure[,f,y,i-offset]<-ifelse(time_at_loc>0 & time_at_loc<3335,
+                          exposure[,f,y,i-offset]+fishery_array[loc+1,
+                                            ifelse(time_at_loc>0 & time_at_loc<3335,time_at_loc+1,1),f,y],exposure[,f,y,i-offset])
   }
 }
 
@@ -177,22 +178,22 @@ for(loc in 495:km_end){ #From Albion, not including Albion start
   for(f in 1:n_fisheries){
   #check exposure against fishery matrix - sum the number of times each fish passes through an area during an open fishery
   #If the fish is in the area after the time we care about, then obviously it's not exposed to any fisheries.
-  exposure[,f,y,i-4000]<-ifelse(time_at_loc>0 & time_at_loc<3335,
-                          exposure[,f,y,i-4000]+fishery_array[loc+1,
-                                            ifelse(time_at_loc>0 & time_at_loc<3335,time_at_loc+1,1),f,y],exposure[,f,y,i-4000])
+  exposure[,f,y,i-offset]<-ifelse(time_at_loc>0 & time_at_loc<3335,
+                          exposure[,f,y,i-offset]+fishery_array[loc+1,
+                                            ifelse(time_at_loc>0 & time_at_loc<3335,time_at_loc+1,1),f,y],exposure[,f,y,i-offset])
      }
   }
 yr=yr+1
 }
-  progress(i,max.value=n_reps+4000,init=4001)
+  progress(i,max.value=n_reps+offset,init=(1+offset))
   Sys.sleep(0.01)
-  if (i==n_reps+4000) cat("Done!\n")
+  if (i==n_reps+offset) cat("Done!\n")
 }
 #Stop the clock
 proc.time() - ptm
 
 #Save iterations - change file name as appropriate
-saveRDS(exposure,file="ComEO_exposure_4001-5000.RData")
+saveRDS(exposure,file=paste0("ComEO_exposure_",(1+offset),"-",(1000+offset),".RData"))
 
 rm(list=ls()) #Reset global environment
 gc() #garbage collector - releases memory back to computer
