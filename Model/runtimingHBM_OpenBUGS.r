@@ -111,11 +111,11 @@ s_mean = mean(rt_sd)
 s_sd = sd(rt_sd)
 s_aprox<-dnorm(5:50,s_mean,1.5*s_sd)
 #plot(density(s[2:53]))
-hist(rt_sd,prob=TRUE, breaks=20, main="",xlab="Distribution of standard deviations (N=22)")
+hist(rt_sd,prob=TRUE, breaks=20, main="",xlab="Distribution of SDs (N=22)")
 lines(5:50,s_aprox,col="red")
 mtext(" (b) ",cex=0.75,line=-1.5,adj=1)
 
-plot(rt_m,rt_sd, xlab="Mean",ylab="Standard deviation")
+plot(rt_m,rt_sd, xlab="Mean",ylab="Standard deviation", bty="l")
 mtext(" (c) ",cex=0.75,line=-1.5,adj=1)
 
 par(mfcol=c(1,1))
