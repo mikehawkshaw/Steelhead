@@ -46,7 +46,7 @@ n_hours<-3336
 n_years<-13
 n_fish<-1000
 n_reps<-1000 #1000 reps with the full 24 fisheries array takes about 8 hrs
-offset<-n_reps-1000 #Offset for number of iterations, for when running >1000
+offset<-0 #Offset for number of iterations, for when running >1000
 total_reps<-5000 #Total reps after running model multiple times
 
 fishery_names<-c("Area B CM","Area B PK","Area B SK",
@@ -83,7 +83,7 @@ yr=yr+1
 
 colnames(fishery_array)<-NULL
 
-colnames(openings)<-c("Fishery","Year")
+colnames(openings)<-seq(2004,2004+n_years-1,by=1)
 openings<-as.data.frame(openings)
 
 saveRDS(openings,"Fisheries_with_openings.RData")
@@ -195,7 +195,7 @@ proc.time() - ptm
 #Save iterations - change file name as appropriate
 saveRDS(exposure,file=paste0("ComEO_exposure_",(1+offset),"-",(1000+offset),".RData"))
 
-rm(list=ls()) #Reset global environment
+#rm(list=ls()) #Reset global environment
 gc() #garbage collector - releases memory back to computer
 
 #############################################
@@ -305,8 +305,8 @@ for(i in 4001:5000){
 rm(exposure_temp) #Takes up a lot of memory, best to remove it when done
 gc()
 
-saveRDS(total_exposed,"ComEO_tot_exposure_1-5000.RData")
-saveRDS(cml_exposure,"ComEO_cml_exposure_1-5000.RData")
+saveRDS(total_exposed,paste0("ComEO_tot_exposure_1-",total_reps,".RData"))
+saveRDS(cml_exposure,paste0("ComEO_cml_exposure_1-",total_reps,".RData"))
 
 #########################
 #--LOAD SAVED ITERATIONS
@@ -804,13 +804,13 @@ pdf(file=paste0("Population Cumulative Perc Exposure to Commercial Fisheries - B
 #par(mfrow=c(1,1),mar=c(3,3,1,1), oma=c(5,5,3,1))
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,4.1), oma=c(1,1,1,1))
 
-palette(c(grDevices::rainbow(17)))
+palette(c(grDevices::rainbow(8)))
 
 #Plot of all years together
 barplot(mean_cml_perc_exp, main="Average Cumulative Exposure \nto Commercial Fisheries by Year",
-          xlab="Year", col=1:17,
+          xlab="Year", col=1:8,
           ylab="% Exposure",
-          legend = seq(0,16,by=1),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),
+          legend = seq(0,7,by=1),names.arg=c("04","05","06","07","08","09","10","11","12","13","14","15","16"),
           args.legend=list(x=18,y=100,bty="n"))
 
 #Plots for each year separately
@@ -829,9 +829,9 @@ for(y in 1:n_years){
     y2[f]<-min(100,mean_cml_perc_exp[f,y]+sd_cml_perc_exp[f,y])
   }
   
-barCenters<-barplot(mean_cml_perc_exp[1:17,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
-        xlab="# of fisheries each fish exposed to", col=1:17,
-        ylab="% Exposure", ylim=range(0,100),names.arg=seq(0,16,by=1))
+barCenters<-barplot(mean_cml_perc_exp[1:8,y], main=paste0("Average Cumulative Exposure \nto Commercial Fisheries in ",yr),
+        xlab="# of fisheries each fish exposed to", col=1:8,
+        ylab="% Exposure", ylim=range(0,100),names.arg=seq(0,7,by=1))
   arrows(barCenters, y1, barCenters, y2, length=0.05, angle=90, code=3)
 
   yr=yr+1
