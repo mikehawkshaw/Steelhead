@@ -21,47 +21,56 @@ int<lower=0> n_years;
 int index[n_days,n_years];
 real obs_catch[n_days,n_years];
 }
-transformed data{
 
-}
 parameters {
-#hyper_parameters
+//hyper_parameters
 real<lower=1,upper=360> mu_rt_m;
-real<lower=1,upper=100> sig_rt_m;
+real<lower=1,upper=100> tau_rt_m;
 real<lower=1,upper=50> mu_rt_sd;
-real<lower=1,upper=50> sig_rt_sd;
+real<lower=1,upper=50> tau_rt_sd;
 real<lower=1e-9,upper=5> sigma;
   
-#annual parameters
+//annual parameters
 real<lower=1,upper=360> rt_m[n_years];
 real<lower=1,upper=100> rt_sd[n_years];
 } 
+transformed parameters{
+  real sig_rt_m;
+  real sig_rt_sd;
 
+  sig_rt_m = 1.0 / sqrt(tau_rt_m);
+  sig_rt_sd = 1.0 / sqrt(tau_rt_sd);
+
+
+}
 model {
 
 real pred_abundance[n_days,n_years];
 
-#hyper_parameters
+//hyper_parameters
 
 mu_rt_m~uniform(240,330);
-sig_rt_m~uniform(1,100);
+tau_rt_m~gamma(0.001,0.001);
 mu_rt_sd~uniform(1,50);
-sig_rt_sd~uniform(1,50);
+tau_rt_sd~gamma(1,50);
 
 
-#annual parameters
+//annual parameters
 for(y in 1:n_years){
 rt_m[y]~normal(mu_rt_m,sig_rt_m);
 rt_sd[y]~normal(mu_rt_sd,sig_rt_sd);
 
 }
 
-#model
+//model
 
 for (y in 1:n_years){
 for(d in 1:n_days)
 {
-pred_abundance[d,y]=(1/(1+exp(-1.7*((d+244)-rt_m[y])/(rt_sd[y]))))-(1/(1+exp(-1.7*((d+243)-rt_m[y])/(rt_sd[y]))));
+//pred_abundance[d,y]=(1/(1+exp(-1.7*((d+244)-rt_m[y])/(rt_sd[y]))))-(1/(1+exp(-1.7*((d+243)-rt_m[y])/(rt_sd[y]))));
+
+pred_abundance[d,y]=(1/(rt_sd[y]*pow((22.0/7.0)*2,0.5)))*exp(-pow(((d+243)-rt_m[y]),2)/(2*pow(rt_sd[y],2)));
+
 if(index[d,y]==1){obs_catch[d,y]~normal(pred_abundance[d,y], sigma);}
 }
 }
@@ -74,6 +83,7 @@ generated quantities {
 
 
 #Read in and set up data
+setwd("C:/DFO-MPO/GitHub/Steelhead/Data")
 albion_annual<-read.table("steelhead_albion.csv",header=T, sep=",")
 annual_sums<-colSums(albion_annual, na.rm=T)
 n_days<-dim(albion_annual)[1]
@@ -95,12 +105,12 @@ for(i in 1:dim(catch)[2])
 
 catch[is.na(catch)]<-999  #STAN hates NAs #Winbugs/OpenBugs it would be better to leave NA's
 #Change back to model directory
-setwd(model_dir)
+setwd("C:/DFO-MPO/GitHub/Steelhead/Model")
 
 dat<-list(n_days=n_days, n_years=n_years, index=fisheries_index, obs_catch=catch)
-inits<-list(list(mu_rt_m=290,sig_rt_m=20,mu_rt_sd=15,sig_rt_sd=8),list(mu_rt_m=280,sig_rt_m=22,mu_rt_sd=13,sig_rt_sd=7),list(mu_rt_m=300,sig_rt_m=10,mu_rt_sd=10,sig_rt_sd=9))
+inits<-list(list(mu_rt_m=290,mu_rt_sd=15),list(mu_rt_m=280,mu_rt_sd=13),list(mu_rt_m=300,mu_rt_sd=10))
 
-fit <- stan(model_code = stanmodelcode, data = dat, iter = 5000, chains = 3,  verbose = TRUE) 
+fit <- stan(model_code = stanmodelcode, data = dat, iter = 10000, chains = 3,  verbose = TRUE,control = list(adapt_delta = 0.99)) 
 fit_ggobj<-ggs(fit)
 
 mu_sd_summary <- summary(fit, pars = c("mu_rt_m", "sig_rt_m","mu_rt_sd", "sig_rt_sd"), probs = c(0.1,0.5, 0.9))$summary
